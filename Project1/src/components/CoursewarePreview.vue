@@ -9,8 +9,8 @@
           <div class="chat-history">
             <div v-for="(msg, index) in chatHistory" :key="index" :class="['chat-item', msg.role]">
               <div class="chat-avatar">
-                <span v-if="msg.role === 'ai'" class="chat-avatar-emoji">🤖</span>
-                <span v-else class="chat-avatar-emoji">👤</span>
+                <div v-if="msg.role === 'ai'" class="robot-icon"></div>
+                <div v-else class="avatar-icon"></div>
               </div>
               <div class="chat-text">{{ msg.content }}</div>
             </div>
@@ -32,7 +32,6 @@
                   @click="currentTab = tab.id"
                   :class="['tab', { active: currentTab === tab.id }]"
                 >
-                  <span class="tab-emoji">{{ tab.icon }}</span>
                   {{ tab.name }}
                 </button>
               </div>
@@ -40,11 +39,11 @@
             <div class="header-right">
               <div class="download-group">
                 <button @click="downloadFile('pptx')" class="download-btn">
-                  <span class="download-emoji">📥</span>
+                  <img src="/images/保存.png" alt="保存" class="download-img">
                   下载 PPT
                 </button>
-                <button @click="downloadFile('docx')" class="download-btn secondary">
-                  <span class="download-emoji">📥</span>
+                <button @click="downloadFile('docx')" class="download-btn">
+                  <img src="/images/保存.png" alt="保存" class="download-img">
                   下载教案
                 </button>
               </div>
@@ -211,9 +210,9 @@ const editingTitle = ref('')
 const editingContent = ref('')
 
 const tabs = [
-  { id: 'ppt', name: 'PPT 课件', icon: '📊' },
-  { id: 'word', name: 'Word 教案', icon: '📄' },
-  { id: 'creative', name: '创意内容', icon: '✨' }
+  { id: 'ppt', name: 'PPT 课件' },
+  { id: 'word', name: 'Word 教案' },
+  { id: 'creative', name: '创意内容' }
 ]
 
 const chatHistory = computed(() => store.chatHistory)
@@ -281,26 +280,34 @@ const downloadFile = (type) => {
 
 <style scoped>
 .preview-page {
-  height: 100%;
+  height: calc(100vh - 120px);
   display: flex;
-  overflow: hidden;
   width: 100%;
 }
 
 .preview-layout {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  height: 100%;
+  grid-template-columns: 280px 1fr;
   width: 100%;
-  gap: 16px;
+  gap: 8px;
   padding: 0;
   transition: grid-template-columns 0.3s ease;
+  min-height: 0;
+  height: 100%;
 }
 
 .preview-layout.sidebar-collapsed {
-  grid-template-columns: 0 1fr;
-  gap: 0;
-  width: 100%;
+  grid-template-columns: 0px 1fr;
+}
+
+.preview-layout.sidebar-collapsed .left-panel {
+  width: 0;
+  overflow: hidden;
+}
+
+.preview-layout.sidebar-collapsed .panel-card,
+.preview-layout.sidebar-collapsed .chat-history {
+  display: none;
 }
 
 .left-panel {
@@ -314,10 +321,11 @@ const downloadFile = (type) => {
 .panel-card {
   flex: 1;
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .panel-header {
@@ -366,7 +374,7 @@ const downloadFile = (type) => {
 }
 
 .chat-item.user .chat-text {
-  background: #d1e7dd;
+  background: #bdd6cd;
   color: #0f5132;
 }
 
@@ -374,14 +382,16 @@ const downloadFile = (type) => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  gap: 16px;
+  gap: 8px;
   min-width: 0;
 }
 
 .main-header-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   padding: 12px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
 }
 
 .main-header {
@@ -423,7 +433,7 @@ const downloadFile = (type) => {
   border: none;
   background: transparent;
   color: #6c757d;
-  border-radius: 10px;
+  border-radius: 16px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -434,7 +444,7 @@ const downloadFile = (type) => {
 }
 
 .tab.active {
-  background: #1a1a1a;
+  background: #312f2f;
   color: white;
 }
 
@@ -445,19 +455,27 @@ const downloadFile = (type) => {
 
 .download-btn {
   padding: 8px 16px;
-  background: #1a1a1a;
+  background: #312f2f;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 16px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.4s ease;
 }
 
 .download-btn.secondary {
   background: white;
   color: #212529;
   border: 1px solid #dee2e6;
+}
+
+.download-btn:hover {
+  background: #000000;
 }
 
 .preview-content {
@@ -474,13 +492,14 @@ const downloadFile = (type) => {
   display: grid;
   grid-template-columns: 160px 1fr;
   height: 100%;
-  gap: 16px;
+  gap: 8px;
 }
 
 .ppt-thumbnails-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .ppt-thumbnails {
@@ -510,23 +529,25 @@ const downloadFile = (type) => {
   text-align: center;
 }
 
-.slide-number {
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  background: #1a1a1a;
-  color: white;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 6px;
+.slide-number{
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: #bdd6cd;
+    color: black;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 12px;
 }
 
 .ppt-main-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  flex: 1;
 }
 
 .ppt-main {
@@ -637,7 +658,7 @@ const downloadFile = (type) => {
 }
 
 .mode-btn.active {
-  background: #1a1a1a;
+  background: #312f2f;
   color: white;
 }
 
@@ -704,8 +725,9 @@ const downloadFile = (type) => {
 
 .word-outline-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .word-outline {
@@ -739,21 +761,26 @@ const downloadFile = (type) => {
 }
 
 .word-outline li.active {
-  background: #d1e7dd;
+  background: #bdd6cd;
   color: #0f5132;
   font-weight: 500;
 }
 
 .word-content-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .word-content {
   height: 100%;
   padding: 24px 40px;
   overflow-y: auto;
+  flex: 1;
 }
 
 .doc-section {
@@ -783,8 +810,10 @@ const downloadFile = (type) => {
 
 .creative-header-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
 }
 
 .creative-container h3 {
@@ -801,8 +830,9 @@ const downloadFile = (type) => {
 
 .creative-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .card-header {
@@ -813,7 +843,7 @@ const downloadFile = (type) => {
 .card-type {
   display: inline-block;
   padding: 4px 12px;
-  background: #d1e7dd;
+  background: #bdd6cd;
   color: #0f5132;
   border-radius: 20px;
   font-size: 12px;
@@ -857,7 +887,7 @@ const downloadFile = (type) => {
   padding: 10px;
   border: 1px solid #dee2e6;
   background: white;
-  border-radius: 10px;
+  border-radius: 16px;
   font-size: 14px;
   color: #495057;
   cursor: pointer;
@@ -867,5 +897,73 @@ const downloadFile = (type) => {
   background: #1a1a1a;
   color: white;
   border: none;
+}
+
+.download-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.robot-icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  border: 2px solid white;
+  border-radius: 6px;
+}
+
+.robot-icon::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 3px;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 9px 0 0 white;
+}
+
+.robot-icon::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  width: 10px;
+  height: 3px;
+  background: white;
+  border-radius: 2px;
+}
+
+.avatar-icon {
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.avatar-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border: 2px solid #0f5132;
+  border-radius: 50%;
+}
+
+.avatar-icon::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 8px;
+  border: 2px solid #0f5132;
+  border-radius: 8px 8px 0 0;
+  border-bottom: none;
 }
 </style>

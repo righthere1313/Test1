@@ -2,7 +2,7 @@
   <div class="knowledge-sidebar">
     <div class="sidebar-card">
       <div class="stats-section">
-        <h4>知识库统计</h4>
+        <h4>本地资料库统计</h4>
         <div class="stats-bar">
           <div class="stat-item">
             <div class="stat-value">{{ documents.length }}</div>
@@ -48,15 +48,15 @@ const processingCount = computed(() =>
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-y: auto;
   height: 100%;
+  min-height: 0;
 }
 
 .sidebar-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   flex: 1;
   display: flex;
   flex-direction: column;

@@ -1,14 +1,28 @@
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
+
+const loadFromStorage = () => {
+  try {
+    const saved = localStorage.getItem('appState')
+    if (saved) {
+      return JSON.parse(saved)
+    }
+  } catch (e) {
+    console.error('Failed to load from localStorage:', e)
+  }
+  return null
+}
+
+const savedState = loadFromStorage()
 
 const store = reactive({
-  user: {
-    username: '张老师',
-    avatar: null
-  },
-  userInfo: {
+  isLoggedIn: savedState?.isLoggedIn || false,
+  user: savedState?.user || {
+    username: '老师',
+    avatar: null,
+    teacherName: '',
     subject: '',
-    grade: '',
-    students: ''
+    schoolName: '',
+    password: ''
   },
   chatHistory: [
     { role: 'user', content: '我想设计一节关于勾股定理的课' },
@@ -22,9 +36,26 @@ const store = reactive({
   updateUser(userData) {
     Object.assign(this.user, userData)
   },
-  updateUserInfo(info) {
-    Object.assign(this.userInfo, info)
+  logout() {
+    this.isLoggedIn = false
+    this.user = {
+      username: '老师',
+      avatar: null,
+      teacherName: '',
+      subject: '',
+      schoolName: '',
+      password: ''
+    }
+    localStorage.removeItem('appState')
   }
 })
+
+watch(
+  () => ({ isLoggedIn: store.isLoggedIn, user: store.user }),
+  (newState) => {
+    localStorage.setItem('appState', JSON.stringify(newState))
+  },
+  { deep: true }
+)
 
 export default store

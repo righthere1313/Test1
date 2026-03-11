@@ -2,16 +2,20 @@
   <div class="chat-sidebar">
     <div class="profile-section">
       <div class="avatar" @click="editAvatar">
-        <span class="avatar-icon">👤</span>
+        <img v-if="store.user.avatar" :src="store.user.avatar" alt="头像" class="avatar-img">
       </div>
       <div class="username-wrapper">
-        <span v-if="!isEditingUsername" class="username" @click="isEditingUsername = true">
+        <span
+          v-if="!isEditingUsername"
+          class="username"
+          @click="isEditingUsername = true"
+        >
           {{ store.user.username }}
         </span>
-        <input 
-          v-else 
-          v-model="editUsername" 
-          @blur="saveUsername" 
+        <input
+          v-else
+          v-model="editUsername"
+          @blur="saveUsername"
           @keyup.enter="saveUsername"
           class="username-input"
           ref="usernameInput"
@@ -20,47 +24,38 @@
     </div>
     <div class="info-section">
       <h4>个人信息</h4>
-      <div v-if="!isEditingInfo" class="info-display">
+      <div class="info-display">
+        <div class="info-item">
+          <span class="info-label">教师姓名：</span>
+          <span class="info-value">{{
+            store.user.teacherName || "未设置"
+          }}</span>
+        </div>
         <div class="info-item">
           <span class="info-label">教学学科：</span>
-          <span class="info-value">{{ store.userInfo.subject || '未设置' }}</span>
+          <span class="info-value">{{ store.user.subject || "未设置" }}</span>
         </div>
         <div class="info-item">
-          <span class="info-label">教学年级：</span>
-          <span class="info-value">{{ store.userInfo.grade || '未设置' }}</span>
+          <span class="info-label">学校名称：</span>
+          <span class="info-value">{{
+            store.user.schoolName || "未设置"
+          }}</span>
         </div>
-        <div class="info-item">
-          <span class="info-label">班级人数：</span>
-          <span class="info-value">{{ store.userInfo.students || '未设置' }}</span>
-        </div>
-        <button @click="isEditingInfo = true" class="edit-info-btn">编辑</button>
-      </div>
-      <div v-else class="info-edit">
-        <div class="form-group">
-          <label>教学学科：</label>
-          <input v-model="editInfo.subject" type="text" placeholder="如：数学" />
-        </div>
-        <div class="form-group">
-          <label>教学年级：</label>
-          <input v-model="editInfo.grade" type="text" placeholder="如：八年级" />
-        </div>
-        <div class="form-group">
-          <label>班级人数：</label>
-          <input v-model="editInfo.students" type="number" placeholder="如：45" />
-        </div>
-        <div class="edit-actions">
-          <button @click="cancelEditInfo" class="btn-secondary">取消</button>
-          <button @click="saveInfo" class="btn-primary">保存</button>
-        </div>
+        <p class="info-note">这些信息将作为课件署名</p>
       </div>
     </div>
     <div class="history-card">
       <div class="history-section">
         <h4>历史课件</h4>
         <div class="history-list">
-          <div v-for="(item, index) in historyCoursewares" :key="index" class="history-item">
+          <div
+            v-for="(item, index) in historyCoursewares"
+            :key="index"
+            class="history-item"
+            @click="goToProfile"
+          >
             <div class="history-icon">
-              <span class="history-icon-emoji">📄</span>
+              <img src="/images/ppt.png" alt="课件" class="history-icon-emoji">
             </div>
             <div class="history-info">
               <div class="history-title">{{ item.title }}</div>
@@ -74,53 +69,35 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from 'vue'
-import store from '../store'
+import { ref, onMounted, nextTick } from "vue";
+import { useRouter } from "vue-router";
+import store from "../store";
 
-const isEditingUsername = ref(false)
-const editUsername = ref('')
-const usernameInput = ref(null)
-const isEditingInfo = ref(false)
-const editInfo = reactive({
-  subject: '',
-  grade: '',
-  students: ''
-})
+const router = useRouter();
+const isEditingUsername = ref(false);
+const editUsername = ref("");
+const usernameInput = ref(null);
 
 const historyCoursewares = ref([
-  { title: '勾股定理教学课件', date: '2024-03-04' },
-  { title: '二次根式复习课', date: '2024-03-03' },
-  { title: '函数图像分析', date: '2024-03-02' }
-])
+  { title: "勾股定理教学课件", date: "2024-03-04" },
+  { title: "二次根式复习课", date: "2024-03-03" },
+  { title: "函数图像分析", date: "2024-03-02" },
+]);
 
 const editAvatar = () => {
-  console.log('编辑头像')
-}
+  router.push("/profile");
+};
 
 const saveUsername = () => {
   if (editUsername.value.trim()) {
-    store.updateUser({ username: editUsername.value.trim() })
+    store.updateUser({ username: editUsername.value.trim() });
   }
-  isEditingUsername.value = false
-}
+  isEditingUsername.value = false;
+};
 
-const saveInfo = () => {
-  store.updateUserInfo({ ...editInfo })
-  isEditingInfo.value = false
-}
-
-const cancelEditInfo = () => {
-  editInfo.subject = store.userInfo.subject
-  editInfo.grade = store.userInfo.grade
-  editInfo.students = store.userInfo.students
-  isEditingInfo.value = false
-}
-
-onMounted(() => {
-  editInfo.subject = store.userInfo.subject
-  editInfo.grade = store.userInfo.grade
-  editInfo.students = store.userInfo.students
-})
+const goToProfile = () => {
+  router.push("/profile");
+};
 </script>
 
 <style scoped>
@@ -129,29 +106,30 @@ onMounted(() => {
   flex-direction: column;
   height: 100%;
   background: white;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
   padding: 16px;
-  gap: 16px;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .profile-section {
-  padding: 24px 20px;
+  padding: 16px 16px;
   text-align: center;
   border-bottom: 1px solid #e9ecef;
   background: white;
 }
 
 .avatar {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: #d1e7dd;
+  background: #bdd6cd;
   color: #0f5132;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 12px;
+  margin: 0 auto 10px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -161,7 +139,14 @@ onMounted(() => {
 }
 
 .avatar-icon {
-  font-size: 32px;
+  font-size: 26px;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .username-wrapper {
@@ -170,11 +155,11 @@ onMounted(() => {
 }
 
 .username {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #212529;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 3px 6px;
   border-radius: 6px;
   transition: background 0.2s ease;
 }
@@ -197,23 +182,23 @@ onMounted(() => {
 }
 
 .info-section {
-  padding: 20px;
+  padding: 14px 16px;
   background: white;
   border-radius: 12px;
 }
 
 .history-card {
   flex: 1;
-  background: #312f2f;
+  background: #2d2d2d;
   border-radius: 12px;
   overflow: hidden;
 }
 
 .info-section h4,
 .history-section h4 {
-  font-size: 14px;
+  font-size: 13px;
   color: #212529;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   font-weight: 600;
 }
 
@@ -224,13 +209,13 @@ onMounted(() => {
 .info-display {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .info-item {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .info-label {
@@ -242,85 +227,12 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.edit-info-btn {
-  margin-top: 12px;
-  padding: 8px 16px;
-  background: #f8f9fa;
-  color: #495057;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-  width: 100%;
-}
-
-.edit-info-btn:hover {
-  background: #e9ecef;
-}
-
-.info-edit {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
-  font-size: 13px;
-  color: #495057;
-}
-
-.form-group input {
-  padding: 10px 12px;
-  border: 1px solid #dee2e6;
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.form-group input:focus {
-  border-color: #1a1a1a;
-}
-
-.edit-actions {
-  display: flex;
-  gap: 10px;
+.info-note {
+  font-size: 11px;
+  color: #6c757d;
   margin-top: 8px;
-}
-
-.btn-secondary,
-.btn-primary {
-  flex: 1;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-secondary {
-  background: #f8f9fa;
-  color: #495057;
-}
-
-.btn-secondary:hover {
-  background: #e9ecef;
-}
-
-.btn-primary {
-  background: #1a1a1a;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #2d2d2d;
+  font-style: italic;
+  text-align: center;
 }
 
 .history-section {
@@ -338,11 +250,11 @@ onMounted(() => {
 .history-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #ffd967;
-  border-radius: 12px;
-  margin-bottom: 10px;
+  gap: 8px;
+  padding: 4px 8px;
+  background: #bdd6cd;
+  border-radius: 8px;
+  margin-bottom: 6px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -352,11 +264,10 @@ onMounted(() => {
 }
 
 .history-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #ffd967;
-  color: #664d03;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -364,7 +275,9 @@ onMounted(() => {
 }
 
 .history-icon-emoji {
-  font-size: 20px;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .history-info {
@@ -373,17 +286,17 @@ onMounted(() => {
 }
 
 .history-title {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
-  color: #664d03;
-  margin-bottom: 2px;
+  color: #000000;
+  margin-bottom: 1px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .history-date {
-  font-size: 12px;
-  color: #856404;
+  font-size: 10px;
+  color: #000000;
 }
 </style>
