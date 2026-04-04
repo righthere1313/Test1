@@ -2,7 +2,7 @@
   <header class="header">
     <div class="logo">
       <span class="logo-icon">
-        <div class="robot-icon"></div>
+        <img src="/images/logo.jpg" alt="Logo" class="logo-img">
       </span>
       <span class="logo-text">多模态AI教学智能体</span>
     </div>
@@ -45,8 +45,9 @@ const route = useRoute()
 
 const navItems = computed(() => [
   { path: '/chat', name: '对话聊天', iconClass: 'chat-icon' },
-  { path: '/knowledge', name: '资料管理', iconClass: 'library-icon' },
   { path: '/preview', name: '课件预览', iconClass: 'document-icon' },
+  { path: '/knowledge', name: '资料管理', iconClass: 'library-icon' },
+  { path: '/history-generation', name: '历史生成', iconClass: 'history-icon' },
   { 
     path: store.isLoggedIn ? '/introduction' : '/', 
     name: '功能介绍', 
@@ -95,35 +96,10 @@ const handleLogout = () => {
   justify-content: center;
 }
 
-.robot-icon {
-  width: 28px;
-  height: 28px;
-  position: relative;
-  border: 2px solid #bdd6cd;
-  border-radius: 8px;
-}
-
-.robot-icon::before {
-  content: '';
-  position: absolute;
-  top: 6px;
-  left: 4px;
-  width: 4px;
-  height: 4px;
-  background: #bdd6cd;
-  border-radius: 50%;
-  box-shadow: 10px 0 0 #bdd6cd;
-}
-
-.robot-icon::after {
-  content: '';
-  position: absolute;
-  bottom: 6px;
-  left: 6px;
-  width: 12px;
-  height: 3px;
-  background: #bdd6cd;
-  border-radius: 2px;
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .logo-text {
@@ -173,6 +149,10 @@ const handleLogout = () => {
 }
 
 .nav-item:nth-child(4) {
+  width: 120px;
+}
+
+.nav-item:nth-child(5) {
   width: 120px;
 }
 
@@ -310,11 +290,36 @@ const handleLogout = () => {
   box-shadow: 0 3px 0 currentColor;
 }
 
-.nav-item:hover {
-  background-color: black;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4),
-              0 0 30px rgba(0, 0, 0, 0.2);
+.history-icon {
+  width: 14px;
+  height: 14px;
+  position: relative;
 }
+
+.history-icon::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+}
+
+.history-icon::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  box-shadow: 0 3px 0 currentColor;
+}
+
 
 .nav-item.active {
   background-color: black;

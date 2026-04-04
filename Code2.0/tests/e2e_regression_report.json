@@ -1,0 +1,71 @@
+{
+  "started_at": 1773818308175,
+  "duration_ms": 1579,
+  "pass_rate": 100.0,
+  "results": [
+    {
+      "method": "POST",
+      "path": "/api/v1/files/upload/kb",
+      "status": 201,
+      "ok": true,
+      "duration_ms": 157
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/files/upload/staging",
+      "status": 201,
+      "ok": true,
+      "duration_ms": 84
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/files/staging/documents",
+      "status": 200,
+      "ok": true,
+      "duration_ms": 6
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/search/fulltext",
+      "status": 200,
+      "ok": true,
+      "duration_ms": 3
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/search/semantic",
+      "status": 200,
+      "ok": true,
+      "duration_ms": 26
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/search/hybrid",
+      "status": 200,
+      "ok": true,
+      "duration_ms": 10
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/qa",
+      "status": 200,
+      "ok": true,
+      "duration_ms": 1288
+    }
+  ],
+  "coverage": {
+    "endpoint_total": 7,
+    "endpoint_passed": 7,
+    "feature_total": 5,
+    "feature_passed": 5
+  },
+  "performance": {
+    "avg_ms": 224.86,
+    "min_ms": 3,
+    "max_ms": 1288
+  },
+  "fix_verification": {
+    "llm_available": true,
+    "reranker_available": true
+  }
+}

@@ -27,6 +27,12 @@
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      // 设置全局API配置
+      window.__APP_CONFIG__ = {
+        API_BASE: "http://localhost:8000/api/v1"
+      };
+    </script>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

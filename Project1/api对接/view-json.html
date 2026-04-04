@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAPI JSON Viewer</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            margin: 0;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <pre id="jsonContent"></pre>
+    <script>
+        const fs = require('fs');
+        const path = require('path');
+        const json = fs.readFileSync(path.join(__dirname, 'openapi.json'), 'utf8');
+        document.getElementById('jsonContent').textContent = json;
+    </script>
+</body>
+</html>

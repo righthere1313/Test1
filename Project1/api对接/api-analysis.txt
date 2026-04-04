@@ -1,0 +1,116 @@
+=== API 接口清单 ===
+
+
+【文件】
+  POST   /api/v1/files/upload/kb
+         Upload Document Kb
+  POST   /api/v1/files/upload/staging
+         Upload Document Staging
+  GET    /api/v1/files/staging/documents
+         List Staging Documents
+  GET    /api/v1/files/documents
+         List Documents
+  GET    /api/v1/files/documents/{document_id}
+         Get Document
+  GET    /api/v1/files/documents/{document_id}/versions
+         List Document Versions
+  GET    /api/v1/files/documents/{document_id}/versions/{version}/download
+         Download Document Version
+
+【对话】
+  POST   /api/v1/chat/search/fulltext
+         Fulltext Search
+  POST   /api/v1/chat/search/semantic
+         Semantic Search
+  POST   /api/v1/chat/search/hybrid
+         Hybrid Search
+  POST   /api/v1/chat/qa
+         Qa
+  POST   /api/v1/chat/intent/detect
+         Detect User Intent
+
+【生成】
+  POST   /api/v1/generate/ppt/render
+         Generate Ppt Render
+  POST   /api/v1/generate/ppt/edit
+         Edit Ppt
+  POST   /api/v1/generate/ppt
+         Edit Ppt Alias
+  POST   /api/v1/generate/ppt/preview
+         Create Ppt Preview
+  GET    /api/v1/generate/ppt/preview/{preview_id}
+         Get Ppt Preview
+  DELETE /api/v1/generate/ppt/preview/{preview_id}
+         Delete Ppt Preview
+  GET    /api/v1/generate/ppt/preview/{preview_id}/pages/{page}.png
+         Get Ppt Preview Page
+  GET    /api/v1/generate/ppt/preview/{preview_id}/thumbs/{page}.png
+         Get Ppt Preview Thumb
+  POST   /api/v1/generate/ppt/multipart
+         Generate Ppt Multipart
+  POST   /api/v1/generate/ppt/auto_layout
+         Generate Ppt Auto Layout
+  GET    /api/v1/generate/ppt/mp4/{job_id}
+         Get Ppt Mp4 Status
+  GET    /api/v1/generate/ppt/mp4/{job_id}/pages/{page}.mp4
+         Get Ppt Mp4 Page
+  POST   /api/v1/generate/docx
+         Generate Docx
+  POST   /api/v1/generate/docx/auto
+         Generate Docx Auto
+  GET    /api/v1/generate/download/{file_type}/{filename}
+         Download File
+
+【模板】
+  GET    /api/v1/templates/layouts
+         List Layouts
+  GET    /api/v1/templates/layouts/design_spec
+         Get Layout Design Spec
+  GET    /api/v1/templates/layouts/svg
+         Get Layout Svg
+
+【用户】
+  POST   /api/v1/user/register
+         Register
+  POST   /api/v1/user/login
+         Login
+
+【其他】
+  GET    /
+         Root
+  GET    /health
+         Health Check
+
+=== 组件定义 ===
+
+- AnswerRequest
+- AnswerResponse
+- BackgroundPart
+- Body_generate_ppt_multipart_api_v1_generate_ppt_multipart_post
+- Body_upload_document_kb_api_v1_files_upload_kb_post
+- Body_upload_document_staging_api_v1_files_upload_staging_post
+- ChartSpec
+- DocumentInfo
+- DocumentVersionInfo
+- DocxAutoRequest
+- DocxDocument
+- DocxElement
+- HTTPValidationError
+- IntentDetectRequest
+- IntentDetectResponse
+- PPTEditRequest
+- PPTLayoutAutoRequest
+- PPTPresentation
+- PPTPreviewOptionsRequest
+- PPTPreviewRequest
+- RectSpec
+- SearchHit
+- SearchRequest
+- SearchResponse
+- SlideContent
+- TemporaryUploadResponse
+- UploadResponse
+- UserCreate
+- UserLogin
+- UserResponse
+- ValidationError

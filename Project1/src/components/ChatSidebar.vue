@@ -46,21 +46,50 @@
     </div>
     <div class="history-card">
       <div class="history-section">
-        <h4>历史课件</h4>
+        <div class="todo-header">
+          <div>待办事项</div>
+          <div class="todo-actions" ref="todoActionsRef">
+            <div class="todo-input-wrapper">
+              <button @click="toggleAddTodo" class="todo-btn add">
+                <span class="btn-icon">+</span>
+              </button>
+              <div v-if="showAddTodo" class="todo-edit-bubble">
+                <input 
+                  v-model="newTodoContent" 
+                  @keyup.enter="saveTodo"
+                  @keyup.esc="cancelAddTodo"
+                  ref="todoInputRef"
+                  class="todo-input"
+                  placeholder="输入待办事项..."
+                  autofocus
+                />
+                <div class="todo-input-buttons">
+                  <button @click="cancelAddTodo" class="todo-input-btn cancel">取消</button>
+                  <button @click="saveTodo" class="todo-input-btn confirm">确认</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="history-list">
           <div
-            v-for="(item, index) in historyCoursewares"
+            v-for="(item, index) in todos"
             :key="index"
-            class="history-item"
-            @click="goToProfile"
+            class="history-item todo-item"
+            :class="{ done: item.done }"
           >
-            <div class="history-icon">
-              <img src="/images/ppt.png" alt="课件" class="history-icon-emoji">
+            <span class="todo-content">{{ item.content }}</span>
+            <div class="todo-right">
+              <button @click="deleteTodo(index)" class="todo-btn delete">
+                <span class="btn-icon">-</span>
+              </button>
+              <button @click="toggleTodo(index)" class="todo-checkbox" :class="{ checked: item.done }">
+                <span v-if="item.done" class="checkmark">✓</span>
+              </button>
             </div>
-            <div class="history-info">
-              <div class="history-title">{{ item.title }}</div>
-              <div class="history-date">{{ item.date }}</div>
-            </div>
+          </div>
+          <div v-if="todos.length === 0" class="empty-todo">
+            暂无待办事项
           </div>
         </div>
       </div>
@@ -69,7 +98,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import store from "../store";
 
@@ -77,12 +106,87 @@ const router = useRouter();
 const isEditingUsername = ref(false);
 const editUsername = ref("");
 const usernameInput = ref(null);
+const todoInputRef = ref(null);
+const todoActionsRef = ref(null);
 
-const historyCoursewares = ref([
-  { title: "勾股定理教学课件", date: "2024-03-04" },
-  { title: "二次根式复习课", date: "2024-03-03" },
-  { title: "函数图像分析", date: "2024-03-02" },
-]);
+const STORAGE_KEY = "chat-todos";
+
+const loadTodos = () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (e) {
+    console.error("加载待办事项失败:", e);
+  }
+  return [
+    { content: "准备数学课件", done: false },
+    { content: "批改作业", done: true },
+    { content: "准备家长会", done: false },
+  ];
+};
+
+const todos = ref(loadTodos());
+
+const saveTodosToStorage = () => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos.value));
+  } catch (e) {
+    console.error("保存待办事项失败:", e);
+  }
+};
+
+const showAddTodo = ref(false);
+const newTodoContent = ref("");
+
+const toggleAddTodo = () => {
+  showAddTodo.value = !showAddTodo.value;
+  if (showAddTodo.value) {
+    newTodoContent.value = "";
+    nextTick(() => {
+      todoInputRef.value?.focus();
+    });
+  }
+};
+
+const saveTodo = () => {
+  if (newTodoContent.value && newTodoContent.value.trim()) {
+    todos.value.push({ content: newTodoContent.value.trim(), done: false });
+    saveTodosToStorage();
+  }
+  showAddTodo.value = false;
+  newTodoContent.value = "";
+};
+
+const cancelAddTodo = () => {
+  showAddTodo.value = false;
+  newTodoContent.value = "";
+};
+
+const handleClickOutside = (event) => {
+  if (showAddTodo.value && todoActionsRef.value && !todoActionsRef.value.contains(event.target)) {
+    cancelAddTodo();
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
+
+const deleteTodo = (index) => {
+  todos.value.splice(index, 1);
+  saveTodosToStorage();
+};
+
+const toggleTodo = (index) => {
+  todos.value[index].done = !todos.value[index].done;
+  saveTodosToStorage();
+};
 
 const editAvatar = () => {
   router.push("/profile");
@@ -111,6 +215,7 @@ const goToProfile = () => {
   padding: 16px;
   gap: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  min-height: 0;
 }
 
 .profile-section {
@@ -118,12 +223,14 @@ const goToProfile = () => {
   text-align: center;
   border-bottom: 1px solid #e9ecef;
   background: white;
+  flex-shrink: 0;
 }
 
 .avatar {
   width: 52px;
   height: 52px;
   border-radius: 50%;
+  border: 2px solid #8ab4aa;
   background: #bdd6cd;
   color: #0f5132;
   display: flex;
@@ -184,14 +291,17 @@ const goToProfile = () => {
 .info-section {
   padding: 14px 16px;
   background: white;
-  border-radius: 12px;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .history-card {
   flex: 1;
-  background: #2d2d2d;
-  border-radius: 12px;
+  background: #c1dad2;
+  border-radius: 6px;
   overflow: hidden;
+  position: relative;
+  min-height: 0;
 }
 
 .info-section h4,
@@ -203,7 +313,8 @@ const goToProfile = () => {
 }
 
 .history-section h4 {
-  color: white;
+  color: rgb(0, 0, 0);
+  margin: 0;
 }
 
 .info-display {
@@ -240,6 +351,139 @@ const goToProfile = () => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.todo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.todo-actions {
+  display: flex;
+  gap: 4px;
+  position: relative;
+}
+
+.todo-input-wrapper {
+  position: relative;
+}
+
+.todo-edit-bubble {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  width: 200px;
+  background: #ffffff;
+  border: 2px solid #8ab4aa;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  z-index: 1000;
+}
+
+.todo-edit-bubble::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 6px;
+  border-width: 0 8px 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent white transparent;
+}
+
+.todo-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid #ffffff;
+  background: #bdd6cd;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.todo-input-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.todo-input-btn {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.todo-input-btn.cancel {
+  background: #e9ecef;
+  color: #6c757d;
+}
+
+.todo-input-btn.cancel:hover {
+  background: #dee2e6;
+}
+
+.todo-input-btn.confirm {
+  background: #8ab4aa;
+  color: white;
+}
+
+.todo-input-btn.confirm:hover {
+  background: #64a596;
+}
+
+.todo-btn {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #312f2f;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: white;
+  color: #312f2f;
+  padding: 0;
+}
+
+.btn-icon {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+.todo-btn.add {
+  border-color: #999999;
+  color: #999999;
+}
+
+.todo-btn.add:hover {
+  background: #999999;
+  color: white;
+}
+
+.todo-btn.delete{
+    background: #ffdfdf;
+    border-color: #fda3ad;
+    color: #fda3ad;
+}
+
+.todo-btn.delete:hover {
+  background: #e28b94;
+  color: white;
 }
 
 .history-list {
@@ -248,55 +492,78 @@ const goToProfile = () => {
 }
 
 .history-item {
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  padding: 4px 8px;
-  background: #bdd6cd;
+  padding: 8px 10px;
+  background-color: #fff;
+  border:2px solid #8ab4aa;
   border-radius: 8px;
+  margin: 0 auto;
   margin-bottom: 6px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.history-item:hover {
-  transform: translateX(4px);
+.todo-content {
+  flex: 1;
+  font-size: 13px;
+  color: #000000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.history-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  color: #ffffff;
+.todo-item.done .todo-content {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.todo-right {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
   flex-shrink: 0;
 }
 
-.history-icon-emoji {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
+.todo-checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #64a596;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease;
+  color: #64a596;
+}
+.todo-checkbox:hover {
+  background: #64a596;
+  border-color: #64a596;
 }
 
-.history-info {
-  flex: 1;
-  min-width: 0;
+.todo-checkbox.checked {
+  background: #64a596;
+  border-color: #64a596;
 }
 
-.history-title {
+.checkmark {
+  color: white;
   font-size: 12px;
-  font-weight: 500;
-  color: #000000;
-  margin-bottom: 1px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: bold;
+  line-height: 1;
+  margin-top: -1px;
 }
 
-.history-date {
-  font-size: 10px;
-  color: #000000;
+.empty-todo {
+  text-align: center;
+  color: #6c757d;
+  font-size: 13px;
+  padding: 20px;
 }
 </style>

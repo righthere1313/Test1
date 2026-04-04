@@ -1,14 +1,17 @@
 <template>
   <div class="knowledge-page">
-    <KnowledgeSidebar :documents="documents" />
+    <KnowledgeSidebar :documents="documents" :all-documents="allDocuments" />
     <div class="main-content">
       <div class="page-header">
         <div class="header-left">
           <h1>本地资料库</h1>
           <p>上传并管理教学参考资料，用于RAG检索增强</p>
         </div>
-        <div class="header-right">
+        <div class="header-right search-area">
           <div class="search-input-wrapper">
+            <button v-if="isSearchMode" @click="clearSearch" class="back-btn">
+              返回
+            </button>
             <input
               v-model="searchQuery"
               type="text"
@@ -18,7 +21,7 @@
           </div>
           <button @click="searchFullText" class="search-btn full-text">
             <img src="/images/搜索.png" alt="搜索" class="btn-img">
-            全文查询
+            查找
           </button>
           <button @click="triggerUpload" class="upload-btn">
             <img src="/images/导入.png" alt="上传" class="btn-img">
@@ -34,171 +37,202 @@
           <span class="col-status">状态</span>
           <span class="col-actions">操作</span>
         </div>
-        <div class="document-list">
-          <div
-            v-for="(doc, index) in documents"
-            :key="doc.id"
-            class="document-item"
-          >
-            <div class="col-name">
-              <div class="file-icon" :class="doc.typeClass">
-                <img 
-                  v-if="doc.type === 'image'"
-                  src="/images/图片.png" 
-                  :alt="doc.type" 
-                  class="file-img"
-                />
-                <img 
-                  v-else
-                  src="/images/文本.png" 
-                  :alt="doc.type" 
-                  class="file-img"
-                />
+
+      <div class="document-list">
+        <transition name="fade" mode="out-in">
+          <div :key="searchKey">
+            <div
+              v-for="(doc, index) in documents"
+              :key="doc.id"
+              class="document-item"
+            >
+              <div class="col-name">
+                <div class="file-icon" :class="'file-icon-' + doc.typeClass">
+                  <img 
+                    :src="getFileIconSrc(doc.type)" 
+                    :alt="doc.type" 
+                    class="file-img"
+                  />
+                </div>
+                <span class="file-name">{{ doc.name }}</span>
               </div>
-              <span class="file-name">{{ doc.name }}</span>
+              <div class="col-type">{{ doc.typeLabel }}</div>
+              <div class="col-time">{{ doc.uploadTime }}</div>
+              <div class="col-status">
+                <span
+                  v-if="doc.status === 'processed'"
+                  class="status-badge success"
+                >
+                  已完成
+                </span>
+                <span
+                  v-else-if="doc.status === 'processing'"
+                  class="status-badge processing"
+                >
+                  向量化中 {{ doc.progress }}%
+                </span>
+                <span v-else class="status-badge error">
+                  处理失败
+                </span>
+              </div>
+              <div class="col-actions">
+                <button
+                  @click="downloadDocument(doc)"
+                  class="action-btn download"
+                  title="下载"
+                >
+                  <img src="/images/下载.png" alt="下载" class="action-img">
+                </button>
+                <button
+                  @click="deleteDocument(doc)"
+                  class="action-btn delete"
+                  title="删除"
+                >
+                  <img src="/images/删除.png" alt="删除" class="action-img">
+                </button>
+              </div>
             </div>
-            <div class="col-type">{{ doc.typeLabel }}</div>
-            <div class="col-time">{{ doc.uploadTime }}</div>
-            <div class="col-status">
-              <span
-                v-if="doc.status === 'processed'"
-                class="status-badge success"
-              >
-                已完成
-              </span>
-              <span
-                v-else-if="doc.status === 'processing'"
-                class="status-badge processing"
-              >
-                向量化中 {{ doc.progress }}%
-              </span>
-              <span v-else class="status-badge error">
-                处理失败
-              </span>
-            </div>
-            <div class="col-actions">
-              <button
-                @click="viewDocument(doc)"
-                class="action-btn view"
-                title="预览"
-              >
-                <img src="/images/眼睛_显示.png" alt="预览" class="action-img">
-              </button>
-              <button
-                @click="deleteDocument(doc.id)"
-                class="action-btn delete"
-                title="删除"
-              >
-                <img src="/images/删除.png" alt="删除" class="action-img">
-              </button>
+            <div v-if="documents.length === 0" class="empty-state">
+              <span class="empty-emoji">📁</span>
+              <h3>暂无文档</h3>
+              <p>上传教学参考资料开始使用</p>
             </div>
           </div>
-          <div v-if="documents.length === 0" class="empty-state">
-            <span class="empty-emoji">📁</span>
-            <h3>暂无文档</h3>
-            <p>上传教学参考资料开始使用</p>
-          </div>
-        </div>
+        </transition>
       </div>
     </div>
+  </div>
     <input
       type="file"
       ref="fileInput"
       multiple
-      accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
+      accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.txt"
       @change="handleFileUpload"
       style="display: none"
     />
-    <div v-if="showPreview" class="modal-overlay" @click.self="closePreview">
-      <div class="preview-modal">
-        <div class="modal-header">
-          <h3>{{ previewDoc?.name }}</h3>
-          <button @click="closePreview" class="close-btn">×</button>
-        </div>
-        <div class="modal-body">
-          <div class="preview-content">
-            <div v-if="previewDoc?.content" class="text-preview">
-              <pre>{{ previewDoc.content }}</pre>
-            </div>
-            <div v-else class="no-preview">
-              <span class="no-preview-emoji">📄</span>
-              <p>暂无预览内容</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import KnowledgeSidebar from "./KnowledgeSidebar.vue";
+import { documentsAPI, searchAPI } from "../services/api";
 
 const fileInput = ref(null);
-const showPreview = ref(false);
-const previewDoc = ref(null);
 const searchQuery = ref("");
+const documents = ref([]);
+const allDocuments = ref([]); // 存储所有文档
+const isSearchMode = ref(false); // 是否为搜索模式
+const searchKey = ref(0); // 用于触发transition动画的key
 
-const documents = ref([
-  {
-    id: 1,
-    name: "初中数学-勾股定理教案.pdf",
-    type: "pdf",
-    typeClass: "pdf",
-    typeLabel: "PDF文档",
-    uploadTime: "2024-03-04 10:30",
-    status: "processed",
-    progress: 100,
-    content:
-      "勾股定理是一个基本的几何定理，指直角三角形的两条直角边的平方和等于斜边的平方。\n\n教学目标：\n1. 理解勾股定理的内容\n2. 掌握勾股定理的证明方法\n3. 能够应用勾股定理解决实际问题",
-  },
-  {
-    id: 2,
-    name: "语文-古诗词鉴赏.pptx",
-    type: "ppt",
-    typeClass: "ppt",
-    typeLabel: "PPT演示",
-    uploadTime: "2024-03-04 11:20",
-    status: "processing",
-    progress: 65,
-    content: null,
-  },
-  {
-    id: 3,
-    name: "高中物理-力学知识点.docx",
-    type: "word",
-    typeClass: "word",
-    typeLabel: "Word文档",
-    uploadTime: "2024-03-03 15:45",
-    status: "processed",
-    progress: 100,
-    content:
-      "力学知识点总结：\n\n一、牛顿运动定律\n1. 牛顿第一定律：惯性定律\n2. 牛顿第二定律：F=ma\n3. 牛顿第三定律：作用力与反作用力",
-  },
-  {
-    id: 4,
-    name: "化学实验示意图.png",
-    type: "image",
-    typeClass: "image",
-    typeLabel: "图片",
-    uploadTime: "2024-03-03 09:15",
-    status: "processed",
-    progress: 100,
-    content: null,
-  },
-  {
-    id: 5,
-    name: "英语语法-时态讲解.pdf",
-    type: "pdf",
-    typeClass: "pdf",
-    typeLabel: "PDF文档",
-    uploadTime: "2024-03-02 14:00",
-    status: "error",
-    progress: 0,
-    content: null,
-  },
-]);
+onMounted(() => {
+  loadDocuments();
+});
+
+const loadDocuments = async () => {
+  try {
+    const data = await documentsAPI.getList();
+    // 过滤掉所有测试文档，只保留用户上传的
+    const testFiles = [
+      'smoke_kb.txt', 'load_4.txt', 'load_0.txt', 'load_6.txt', 
+      'load_1.txt', 'load_9.txt', 'load_8.txt', 'load_2.txt', 
+      'load_3.txt', 'load_5.txt', 'load_7.txt', 'seed.txt', 
+      'connectivity.txt', 'kb.txt', 'connectivity_seed.txt', 't.txt',
+      'ai_intro_seed.md'
+    ];
+    const filteredData = data.filter(doc => {
+      const filename = doc.filename || '';
+      const lowerFilename = filename.toLowerCase();
+      return !testFiles.includes(filename) &&
+             !lowerFilename.includes('sample') && 
+             !lowerFilename.includes('test') &&
+             !lowerFilename.includes('demo') &&
+             !filename.includes('sample_doc') && 
+             !filename.includes('sample-doc');
+    });
+    
+    const docs = filteredData.map(doc => ({
+      id: doc.document_id,
+      name: doc.filename,
+      type: doc.file_type,
+      typeClass: doc.file_type,
+      typeLabel: getTypeLabel(doc.file_type),
+      uploadTime: formatDate(doc.created_at),
+      status: 'processed',
+      progress: 100,
+      content: null,
+      currentVersion: doc.current_version,
+      updatedAt: doc.updated_at
+    }));
+    
+    // 保存所有文档到allDocuments
+    allDocuments.value = docs;
+    // 如果不在搜索模式，显示所有文档
+    if (!isSearchMode.value) {
+      documents.value = [...docs]; // 使用展开运算符创建新数组
+    }
+  } catch (error) {
+    console.error('加载文档失败:', error);
+    // 404 错误时不弹出提示，显示空状态
+    if (error.message !== '资源未找到' && error.message !== 'Not Found') {
+      alert('加载文档失败：' + error.message);
+    }
+    // 如果API不可用，显示空列表而不是模拟数据
+    console.log('API不可用，显示空列表');
+    allDocuments.value = [];
+    if (!isSearchMode.value) {
+      documents.value = [];
+    }
+  }
+};
+
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getTypeLabel = (type) => {
+  const typeMap = {
+    'pdf': 'PDF文档',
+    'docx': 'Word文档',
+    'doc': 'Word文档',
+    'ppt': 'PPT演示',
+    'pptx': 'PPT演示',
+    'txt': '文本文件',
+    'md': 'Markdown文档',
+    'markdown': 'Markdown文档',
+    'image': '图片',
+    'jpg': '图片',
+    'jpeg': '图片',
+    'png': '图片',
+    'gif': '图片'
+  };
+  return typeMap[type] || '文件';
+};
+
+const getFileIconSrc = (type) => {
+  const typeLower = type?.toLowerCase() || '';
+  if (typeLower === 'pdf') {
+    return '/images/文件类型/pdf.png';
+  } else if (typeLower === 'docx' || typeLower === 'doc') {
+    return '/images/文件类型/docx.png';
+  } else if (typeLower === 'ppt' || typeLower === 'pptx') {
+    return '/images/文件类型/ppt.png';
+  } else if (typeLower === 'txt') {
+    return '/images/文件类型/txt.png';
+  } else if (['jpg', 'jpeg', 'png', 'gif', 'image'].includes(typeLower)) {
+    return '/images/文件类型/png.png';
+  } else if (typeLower === 'md' || typeLower === 'markdown') {
+    return '/images/文件类型/txt.png';
+  }else if (typeLower === 'mp4') {
+    return '/images/文件类型/mp4.png';
+  }
+  return '/images/文件类型/txt.png';
+};
 
 const processedCount = computed(
   () => documents.value.filter((d) => d.status === "processed").length,
@@ -212,119 +246,266 @@ const triggerUpload = () => {
   fileInput.value.click();
 };
 
-const handleFileUpload = (e) => {
+const handleFileUpload = async (e) => {
   const files = Array.from(e.target.files);
-  files.forEach((file, index) => {
-    const typeMap = {
-      "application/pdf": {
-        type: "pdf",
-        typeClass: "pdf",
-        typeLabel: "PDF文档",
-      },
-      "application/msword": {
-        type: "word",
-        typeClass: "word",
-        typeLabel: "Word文档",
-      },
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        { type: "word", typeClass: "word", typeLabel: "Word文档" },
-      "application/vnd.ms-powerpoint": {
-        type: "ppt",
-        typeClass: "ppt",
-        typeLabel: "PPT演示",
-      },
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-        { type: "ppt", typeClass: "ppt", typeLabel: "PPT演示" },
-      "image/jpeg": { type: "image", typeClass: "image", typeLabel: "图片" },
-      "image/png": { type: "image", typeClass: "image", typeLabel: "图片" },
-      "image/gif": { type: "image", typeClass: "image", typeLabel: "图片" },
-    };
+  for (const file of files) {
+    try {
+      // 根据接口文档支持的格式进行验证
+      const supportedTypes = {
+        "application/pdf": "pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+        "text/plain": "txt",
+        "text/markdown": "md"
+      };
 
-    const fileType = typeMap[file.type] || {
-      type: "other",
-      typeClass: "other",
-      typeLabel: "文件",
-    };
+      // 检查文件类型是否支持
+      if (!supportedTypes[file.type]) {
+        alert(`不支持的文件类型: ${file.type}\n支持的格式: .pdf, .docx, .txt, .md`);
+        continue;
+      }
 
-    const newDoc = {
-      id: Date.now() + index,
-      name: file.name,
-      ...fileType,
-      uploadTime: new Date()
-        .toLocaleString("zh-CN", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-        .replace(/\//g, "-"),
-      status: "processing",
-      progress: 0,
-      content: null,
-    };
-
-    documents.value.unshift(newDoc);
-
-    simulateProcessing(newDoc.id);
-  });
+      // 直接上传文件，不在界面上显示临时文档
+      const uploadResponse = await documentsAPI.upload(file);
+      
+      // 创建最终文档对象
+      const finalDoc = {
+        id: uploadResponse.document_id,
+        name: uploadResponse.filename,
+        type: uploadResponse.file_type,
+        typeClass: uploadResponse.file_type,
+        typeLabel: getTypeLabel(uploadResponse.file_type),
+        uploadTime: formatDate(uploadResponse.created_at || new Date().toISOString()),
+        status: "processed",
+        progress: 100,
+        content: null,
+        currentVersion: uploadResponse.version,
+        chunkCount: uploadResponse.chunk_count,
+        sections: uploadResponse.sections || []
+      };
+      
+      // 只在allDocuments中添加，避免重复显示
+      allDocuments.value.unshift(finalDoc);
+      
+      // 如果当前不是搜索模式，才显示在文档列表中
+      if (!isSearchMode.value) {
+        documents.value.unshift(finalDoc);
+      } else {
+        console.log('文件已上传，但在搜索模式下不显示:', uploadResponse.filename);
+      }
+      
+      // 上传成功，不显示弹窗
+      console.log('上传成功:', uploadResponse.filename);
+    } catch (error) {
+      console.error('上传失败:', error);
+      // 404 错误时不弹出提示
+      if (error.message !== '资源未找到' && error.message !== 'Not Found') {
+        alert('上传失败：' + error.message);
+      }
+    }
+  }
   e.target.value = "";
 };
 
-const simulateProcessing = (docId) => {
-  const doc = documents.value.find((d) => d.id === docId);
-  if (!doc) return;
-
-  const interval = setInterval(() => {
-    if (doc.progress < 100) {
-      doc.progress += Math.floor(Math.random() * 15) + 5;
-      if (doc.progress > 100) doc.progress = 100;
-    } else {
-      doc.status = "processed";
-      clearInterval(interval);
-    }
-  }, 500);
-};
-
-const viewDocument = (doc) => {
-  previewDoc.value = doc;
-  showPreview.value = true;
-};
-
-const closePreview = () => {
-  showPreview.value = false;
-  previewDoc.value = null;
-};
-
-const searchFullText = () => {
-  if (!searchQuery.value.trim()) {
-    alert("请输入查询内容");
-    return;
-  }
-  alert(`执行全文查询: ${searchQuery.value}`);
-};
-
-const searchSimilarity = () => {
-  if (!searchQuery.value.trim()) {
-    alert("请输入查询内容");
-    return;
-  }
-  alert(`执行相似度查询: ${searchQuery.value}`);
-};
-
-const deleteDocument = (id) => {
-  if (confirm("确定要删除这个文档吗？")) {
-    const index = documents.value.findIndex((d) => d.id === id);
-    if (index > -1) {
-      documents.value.splice(index, 1);
+const downloadDocument = async (doc) => {
+  try {
+    // 使用当前版本下载，根据新接口文档
+    await documentsAPI.downloadVersion(doc.id, doc.currentVersion || 1);
+  } catch (error) {
+    console.error('下载失败:', error);
+    // 404 错误时不弹出提示
+    if (error.message !== '资源未找到' && error.message !== 'Not Found') {
+      alert('下载失败：' + error.message);
     }
   }
+};
+
+const searchFullText = async () => {
+  if (!searchQuery.value.trim()) {
+    // 如果搜索框为空，显示所有文档
+    searchKey.value++;
+    isSearchMode.value = false;
+    documents.value = [...allDocuments.value];
+    return;
+  }
+  try {
+    searchKey.value++;
+    isSearchMode.value = true;
+    const query = searchQuery.value.trim().toLowerCase();
+    
+    // 1. 前端按标题搜索
+    const frontendSearchResults = allDocuments.value.filter(doc => 
+      doc.name.toLowerCase().includes(query)
+    );
+    
+    // 2. 调用后端混合检索API
+    let backendSearchResults = [];
+    try {
+      const response = await searchAPI.hybrid(searchQuery.value);
+      console.log('混合检索响应:', response);
+      
+      const results = response.results || [];
+      
+      // 按document_id去重，避免同一个文档显示多次，并过滤所有测试文档
+      const seenDocumentIds = new Set();
+      const uniqueResults = [];
+      const testFiles = [
+        'smoke_kb.txt', 'load_4.txt', 'load_0.txt', 'load_6.txt', 
+        'load_1.txt', 'load_9.txt', 'load_8.txt', 'load_2.txt', 
+        'load_3.txt', 'load_5.txt', 'load_7.txt', 'seed.txt', 
+        'connectivity.txt', 'kb.txt', 'connectivity_seed.txt', 't.txt'
+      ];
+      
+      for (const result of results) {
+        const metadata = result.metadata || {};
+        const documentId = metadata.document_id;
+        const filename = metadata.filename || '';
+        const lowerFilename = filename.toLowerCase();
+        
+        // 过滤掉所有测试文档
+        if (testFiles.includes(filename) ||
+            lowerFilename.includes('sample') || 
+            lowerFilename.includes('test') ||
+            lowerFilename.includes('demo') ||
+            filename.includes('sample_doc') || 
+            filename.includes('sample-doc')) {
+          continue;
+        }
+        
+        // 如果已经见过这个document_id，跳过
+        if (documentId && seenDocumentIds.has(documentId)) {
+          continue;
+        }
+        
+        // 记录已见过的document_id
+        if (documentId) {
+          seenDocumentIds.add(documentId);
+        }
+        
+        uniqueResults.push(result);
+      }
+      
+      // 根据接口文档格式处理搜索结果
+      backendSearchResults = uniqueResults.map(result => {
+        const metadata = result.metadata || {};
+        return {
+          id: metadata.document_id || result.chunk_id,
+          name: metadata.filename || '搜索结果',
+          type: metadata.filename?.split('.').pop() || 'txt',
+          typeClass: metadata.filename?.split('.').pop() || 'txt',
+          typeLabel: getTypeLabel(metadata.filename?.split('.').pop() || 'txt'),
+          uploadTime: formatDate(new Date().toISOString()),
+          status: 'processed',
+          progress: 100,
+          content: result.content || result.text,
+          score: result.score,
+          chunkId: result.chunk_id,
+          page: metadata.page,
+          version: metadata.version,
+          searchMode: response.mode || 'hybrid'
+        };
+      });
+    } catch (apiError) {
+      console.error('后端搜索失败，仅使用前端搜索:', apiError);
+    }
+    
+    // 3. 合并结果：前端搜索结果置顶，然后是后端搜索结果，去重
+    const finalResults = [];
+    const finalSeenIds = new Set();
+    
+    // 添加前端搜索结果
+    for (const doc of frontendSearchResults) {
+      if (!finalSeenIds.has(doc.id)) {
+        finalSeenIds.add(doc.id);
+        finalResults.push({ ...doc, isFrontendResult: true });
+      }
+    }
+    
+    // 添加后端搜索结果（排除已在前端结果中的）
+    for (const doc of backendSearchResults) {
+      if (!finalSeenIds.has(doc.id)) {
+        finalSeenIds.add(doc.id);
+        finalResults.push(doc);
+      }
+    }
+    
+    documents.value = finalResults;
+  } catch (error) {
+    console.error('搜索失败:', error);
+    // 404 错误时不弹出提示
+    if (error.message !== '资源未找到' && error.message !== 'Not Found') {
+      alert('搜索失败：' + error.message);
+    }
+  }
+};
+
+
+
+const deleteDocument = async (doc) => {
+  if (confirm(`确定要删除文档 "${doc.name}" 吗？`)) {
+    try {
+      await documentsAPI.delete(doc.id);
+      
+      const index = documents.value.findIndex((d) => d.id === doc.id);
+      if (index > -1) {
+        documents.value.splice(index, 1);
+      }
+      
+      const allIndex = allDocuments.value.findIndex((d) => d.id === doc.id);
+      if (allIndex > -1) {
+        allDocuments.value.splice(allIndex, 1);
+      }
+      
+      console.log('文档已删除:', doc.name);
+    } catch (error) {
+      console.error('删除失败:', error);
+      alert('删除失败：' + error.message);
+    }
+  }
+};
+
+// 清空搜索
+const clearSearch = () => {
+  searchKey.value++;
+  searchQuery.value = '';
+  isSearchMode.value = false;
+  documents.value = [...allDocuments.value]; // 显示所有文档
 };
 </script>
 
 <style scoped>
+/* 返回按钮样式 */
+.back-btn {
+    background: #8ab4aa;
+    color: #000000;
+    border: none;
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-btn:hover {
+  background: #64a596;
+}
+/* 淡入淡出动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 .knowledge-page {
-  height: calc(100vh - 120px);
+  height: calc(100vh - 110px);
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 8px;
@@ -391,17 +572,9 @@ const deleteDocument = (id) => {
   color: white;
 }
 
-.search-btn.full-text:hover {
-  background: #1a1a1a;
-}
-
 .search-btn.similarity {
-  background: #312f2f;
+  background: #8ab4aa;
   color: white;
-}
-
-.search-btn.similarity:hover {
-  background: #1a1a1a;
 }
 
 .btn-img {
@@ -434,9 +607,6 @@ const deleteDocument = (id) => {
   font-weight: 500;
 }
 
-.upload-btn:hover {
-  background: #1a1a1a;
-}
 
 .file-img {
   width: 24px;
@@ -462,12 +632,12 @@ const deleteDocument = (id) => {
 
 .list-header {
   display: grid;
-  grid-template-columns: 2.5fr 1fr 1.2fr 1fr 0.8fr;
-  gap: 16px;
-  padding: 16px 20px;
+  grid-template-columns: 2.5fr 1fr 1.2fr 1fr 1fr;
+  gap: 20px;
+  padding: 20px 32px 20px 32px;
   background: #f8f9fa;
   border-bottom: 1px solid #e9ecef;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   color: #495057;
 }
@@ -475,13 +645,14 @@ const deleteDocument = (id) => {
 .document-list {
   flex: 1;
   overflow-y: auto;
+  max-height: calc(100vh - 280px); /* 限制最大高度，避免拉长盒子 */
 }
 
 .document-item {
   display: grid;
-  grid-template-columns: 2.5fr 1fr 1.2fr 1fr 0.8fr;
-  gap: 16px;
-  padding: 16px 20px;
+  grid-template-columns: 2.5fr 1fr 1.2fr 1fr 1fr;
+  gap: 20px;
+  padding: 20px 32px 20px 32px;
   align-items: center;
   border-bottom: 1px solid #f8f9fa;
 }
@@ -493,7 +664,7 @@ const deleteDocument = (id) => {
 .col-name {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 18px;
 }
 
 .file-icon {
@@ -507,29 +678,44 @@ const deleteDocument = (id) => {
   font-size: 24px;
 }
 
-.file-icon.pdf {
-  background: #bdd6cd;
-  color: #0f5132;
+.file-icon-pdf {
+  background: #fce2e2;
 }
 
-.file-icon.word {
-  background: #cff4fc;
-  color: #055160;
+.file-icon-docx {
+  background: #dde7ec;
 }
 
-.file-icon.ppt {
-  background: #fff3cd;
-  color: #664d03;
+.file-icon-doc {
+  background: #d3e3ec;
 }
 
-.file-icon.image {
+.file-icon-ppt {
+  background: #fff1c4;
+}
+
+.file-icon-pptx {
+  background: #fff1c4;
+}
+
+.file-icon-txt {
+  background: #e7e5ff;
+}
+
+.file-icon-md {
+  background: #bafff5;
+}
+
+.file-icon-markdown {
+  background: #dddcff;
+}
+
+.file-icon-image {
   background: #f8d7da;
-  color: #842029;
 }
 
-.file-icon.other {
-  background: #e9ecef;
-  color: #495057;
+.file-icon-png {
+  background: #f8d7da;
 }
 
 .file-name {
@@ -539,13 +725,11 @@ const deleteDocument = (id) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 200px; /* 限制最大宽度 */
+  display: inline-block; /* 确保宽度限制生效 */
 }
 
-.col-type,
-.col-time {
-  font-size: 14px;
-  color: #6c757d;
-}
+
 
 .status-badge {
   display: inline-flex;
@@ -619,13 +803,22 @@ const deleteDocument = (id) => {
   color: white;
 }
 
+.action-btn.download {
+  background: #8ab4aa;
+  color: white;
+}
+
+.action-btn.download:hover {
+  background: #64a596;
+}
+
 .action-btn.delete {
   background: #f8d7da;
   color: #842029;
 }
 
 .action-btn.delete:hover {
-  background: #842029;
+  background: #ff8f98;
   color: white;
 }
 

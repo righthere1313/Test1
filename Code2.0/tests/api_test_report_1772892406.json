@@ -1,0 +1,125 @@
+{
+  "summary": {
+    "total_tests": 14,
+    "passed": 8,
+    "failed": 6,
+    "pass_rate": "57.14%",
+    "total_time_seconds": 0.08267617225646973
+  },
+  "test_results": [
+    {
+      "test_name": "健康检查",
+      "status": "PASS",
+      "result": {
+        "status": "ok"
+      },
+      "error": null
+    },
+    {
+      "test_name": "根路径",
+      "status": "PASS",
+      "result": {
+        "message": "TeachingAgent Local Knowledge Base Service",
+        "docs_url": "/docs",
+        "endpoints": {
+          "upload_document": "/api/v1/files/upload",
+          "list_documents": "/api/v1/files/documents",
+          "fulltext_search": "/api/v1/chat/search/fulltext",
+          "semantic_search": "/api/v1/chat/search/semantic",
+          "hybrid_search": "/api/v1/chat/search/hybrid",
+          "qa": "/api/v1/chat/qa"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "文档上传",
+      "status": "FAIL",
+      "result": null,
+      "error": "500 Server Error: Internal Server Error for url: http://localhost:8000/api/v1/files/upload"
+    },
+    {
+      "test_name": "文档列表",
+      "status": "PASS",
+      "result": [],
+      "error": null
+    },
+    {
+      "test_name": "全文搜索",
+      "status": "PASS",
+      "result": {
+        "mode": "fulltext",
+        "query": "测试",
+        "results": []
+      },
+      "error": null
+    },
+    {
+      "test_name": "语义搜索",
+      "status": "PASS",
+      "result": {
+        "mode": "semantic",
+        "query": "验证功能",
+        "results": []
+      },
+      "error": null
+    },
+    {
+      "test_name": "混合搜索",
+      "status": "PASS",
+      "result": {
+        "mode": "hybrid",
+        "query": "API测试",
+        "results": []
+      },
+      "error": null
+    },
+    {
+      "test_name": "问答生成",
+      "status": "FAIL",
+      "result": null,
+      "error": ""
+    },
+    {
+      "test_name": "PPT生成",
+      "status": "FAIL",
+      "result": null,
+      "error": "404 Client Error: Not Found for url: http://localhost:8000/api/v1/generate/ppt"
+    },
+    {
+      "test_name": "DOCX生成",
+      "status": "FAIL",
+      "result": null,
+      "error": "404 Client Error: Not Found for url: http://localhost:8000/api/v1/generate/docx"
+    },
+    {
+      "test_name": "文件下载",
+      "status": "FAIL",
+      "result": null,
+      "error": "404 Client Error: Not Found for url: http://localhost:8000/api/v1/generate/ppt"
+    },
+    {
+      "test_name": "边界条件",
+      "status": "FAIL",
+      "result": null,
+      "error": ""
+    },
+    {
+      "test_name": "错误条件",
+      "status": "PASS",
+      "result": {
+        "error_tests": "completed"
+      },
+      "error": null
+    },
+    {
+      "test_name": "性能测试",
+      "status": "PASS",
+      "result": {
+        "avg_search_time_ms": 1.9675095876057944
+      },
+      "error": null
+    }
+  ],
+  "timestamp": "2026-03-07 22:06:46"
+}

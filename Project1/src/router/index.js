@@ -5,6 +5,7 @@ import CoursewarePreview from '../components/CoursewarePreview.vue'
 import LoginRegister from '../components/LoginRegister.vue'
 import Profile from '../components/Profile.vue'
 import HomePage from '../components/HomePage.vue'
+import HistoryGeneration from '../components/HistoryGeneration.vue'
 
 const routes = [
   {
@@ -41,6 +42,11 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: Profile
+  },
+  {
+    path: '/history-generation',
+    name: 'HistoryGeneration',
+    component: HistoryGeneration
   }
 ]
 

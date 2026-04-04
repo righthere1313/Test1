@@ -1,0 +1,3 @@
+status=201
+
+{"document_id":"71f6ea8e-bec0-429d-ac49-8970f991382d","filename":"ai_intro_seed.md","file_type":"md","version":9,"chunk_count":1,"sections":[{"title":"# 人工智能导论（知识库种子）","page_number":1,"index":0},{"title":"## 核心术语","page_number":1,"index":2},{"title":"## 典型任务","page_number":1,"index":8},{"title":"## 评价与风险","page_number":1,"index":12},{"title":"## 课程建议结构","page_number":1,"index":15},{"title":"1. AI 发展与应用案例","page_number":1,"index":16}],"status":"processed"}

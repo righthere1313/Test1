@@ -1,0 +1,3 @@
+status=200
+
+{"status":"success","filename":"d363f56b-a9d5-4025-a5e9-1bff8abb343e.pptx","download_url":"/api/v1/generate/download/ppt/d363f56b-a9d5-4025-a5e9-1bff8abb343e.pptx","llm_used":true,"ppt_id":"f58399f87528476c9822c8a1fa4c8e44","version":1}

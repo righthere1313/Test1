@@ -1,0 +1,198 @@
+{
+  "base_url": "http://localhost:8000",
+  "started_at": "2026-03-12 15:43:34",
+  "elapsed_ms": 7,
+  "summary": {
+    "total": 12,
+    "success": 0,
+    "failure": 12
+  },
+  "results": [
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/search/fulltext",
+      "url": "http://localhost:8000/api/v1/chat/search/fulltext",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/chat/search/fulltext (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc8262fd0>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": {
+        "query": "测试",
+        "top_k": 3,
+        "document_id": null
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/search/semantic",
+      "url": "http://localhost:8000/api/v1/chat/search/semantic",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/chat/search/semantic (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc821e3f0>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": {
+        "query": "测试",
+        "top_k": 3,
+        "document_id": null
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/search/hybrid",
+      "url": "http://localhost:8000/api/v1/chat/search/hybrid",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/chat/search/hybrid (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc821e780>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": {
+        "query": "测试",
+        "top_k": 3,
+        "document_id": null
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/chat/qa",
+      "url": "http://localhost:8000/api/v1/chat/qa",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/chat/qa (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc84ad6d0>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": {
+        "query": "测试问题",
+        "top_k": 3,
+        "document_id": null,
+        "temporary_document_ids": null,
+        "session_id": "connectivity-test"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/files/upload",
+      "url": "http://localhost:8000/api/v1/files/upload",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/files/upload (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc82c1040>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/files/upload/kb",
+      "url": "http://localhost:8000/api/v1/files/upload/kb",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/files/upload/kb (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc846bce0>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/files/upload/staging",
+      "url": "http://localhost:8000/api/v1/files/upload/staging",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/files/upload/staging (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc82c0f30>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/files/staging/documents",
+      "url": "http://localhost:8000/api/v1/files/staging/documents",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/files/staging/documents (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc82c1040>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/files/documents",
+      "url": "http://localhost:8000/api/v1/files/documents",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/files/documents (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc82c0d10>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/files/documents/{document_id}",
+      "url": "http://localhost:8000/api/v1/files/documents/nonexistent",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/files/documents/nonexistent (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc82c0af0>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/files/documents/{document_id}/versions",
+      "url": "http://localhost:8000/api/v1/files/documents/nonexistent/versions",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/files/documents/nonexistent/versions (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc82c08d0>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/files/documents/{document_id}/versions/{version}/download",
+      "url": "http://localhost:8000/api/v1/files/documents/nonexistent/versions/1/download",
+      "status": null,
+      "ok": false,
+      "duration_ms": 0,
+      "content_type": null,
+      "is_json": null,
+      "json_valid": null,
+      "schema_valid": null,
+      "error": "RequestError: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/files/documents/nonexistent/versions/1/download (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x782fc82c07c0>: Failed to establish a new connection: [Errno 111] Connection refused'))",
+      "payload": null
+    }
+  ]
+}

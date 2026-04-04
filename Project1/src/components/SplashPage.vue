@@ -1,7 +1,7 @@
 <template>
   <div class="splash-page">
     <div class="splash-content">
-      <div class="logo-placeholder"></div>
+      <img class="logo-placeholder" src="/images/logo.jpg" alt="logo">
       <p class="slogan">让教学更简单，让课堂更精彩</p>
       <p class="english">From prep to class, we make it brilliant</p>
     </div>
@@ -27,8 +27,8 @@
 }
 
 .logo-placeholder {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   margin: 0 auto 16px;
   border-radius: 24px;
   background: linear-gradient(135deg, #dbfff2 0%, #cce4db 100%);

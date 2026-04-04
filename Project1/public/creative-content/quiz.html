@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>快问快答 - 问答游戏</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			user-select: none;
+		}
+
+		html, body {
+			height: 100vh;
+			overflow: hidden;
+		}
+
+		body {
+			background: #fff;
+			font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+			padding: 20px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.game-card {
+			background: #fff;
+			border: 2px solid #1a1a1a;
+			width: 100%;
+			max-width: 680px;
+			height: calc(100vh - 40px);
+			display: flex;
+			flex-direction: column;
+		}
+
+		.game-header {
+			padding: 24px;
+			background: #bdd6cd;
+			border-bottom: 2px solid #1a1a1a;
+			flex-shrink: 0;
+		}
+
+		.game-header h2 {
+			font-size: 26px;
+			font-weight: 800;
+			color: #1a1a1a;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.game-header p {
+			font-size: 14px;
+			color: #1a1a1a;
+			margin-top: 8px;
+			font-weight: 600;
+		}
+
+		.game-content {
+			padding: 24px;
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.quiz-area {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+			height: 100%;
+		}
+
+		.question-text {
+			font-size: 20px;
+			font-weight: 700;
+			background: #f0f0f0;
+			padding: 20px;
+			border: 2px solid #1a1a1a;
+			color: #1a1a1a;
+			line-height: 1.6;
+		}
+
+		.options-grid {
+			display: flex;
+			flex-direction: column;
+			gap: 14px;
+			flex: 1;
+		}
+
+		.quiz-option {
+			background: #fff;
+			border: 2px solid #1a1a1a;
+			padding: 16px 20px;
+			font-size: 17px;
+			font-weight: 700;
+			text-align: left;
+			color: #1a1a1a;
+			cursor: pointer;
+			transition: all 0.15s;
+			font-family: inherit;
+		}
+
+		.quiz-option:hover:not(:disabled) {
+			background: #bdd6cd;
+		}
+
+		.quiz-option.correct-feedback {
+			background: #bdd6cd;
+			border-color: #1a1a1a;
+			color: #1a1a1a;
+		}
+
+		.quiz-option.wrong-feedback {
+			background: #f0f0f0;
+			border-color: #1a1a1a;
+			color: #1a1a1a;
+			text-decoration: line-through;
+		}
+
+		.quiz-option.disabled-opt {
+			cursor: default;
+			opacity: 0.7;
+		}
+
+		.feedback-area {
+			background: #f0f0f0;
+			padding: 16px 20px;
+			font-size: 15px;
+			font-weight: 600;
+			color: #1a1a1a;
+			border: 2px solid #1a1a1a;
+		}
+
+		.next-btn {
+			background: #1a1a1a;
+			color: #fff;
+			border: 2px solid #1a1a1a;
+			padding: 14px 32px;
+			font-weight: 800;
+			font-size: 16px;
+			cursor: pointer;
+			transition: all 0.15s;
+			font-family: inherit;
+			align-self: flex-start;
+		}
+
+		.next-btn:hover:not(:disabled) {
+			background: #333;
+		}
+
+		.next-btn:disabled {
+			background: #999;
+			cursor: not-allowed;
+		}
+
+		.score {
+			font-weight: 800;
+			background: #f0f0f0;
+			display: inline-block;
+			padding: 8px 16px;
+			font-size: 15px;
+			color: #1a1a1a;
+			border: 2px solid #1a1a1a;
+		}
+
+		@media (max-width: 600px) {
+			body {
+				padding: 10px;
+			}
+
+			.game-card {
+				height: calc(100vh - 20px);
+			}
+
+			.game-header {
+				padding: 16px;
+			}
+
+			.game-header h2 {
+				font-size: 20px;
+			}
+
+			.game-content {
+				padding: 16px;
+			}
+
+			.question-text {
+				font-size: 17px;
+				padding: 16px;
+			}
+
+			.quiz-option {
+				font-size: 15px;
+				padding: 12px 16px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="game-card">
+		<div class="game-header">
+			<h2>快问快答 <span class="score" id="quizScore">得分: 0</span></h2>
+			<p>人工智能通识小测验 · 每题10分</p>
+		</div>
+		<div class="game-content">
+			<div class="quiz-area">
+				<div class="question-text" id="questionText">加载题目中...</div>
+				<div class="options-grid" id="optionsContainer"></div>
+				<div class="feedback-area" id="feedbackMsg">点击选项，选择正确答案</div>
+				<button class="next-btn" id="nextQuestionBtn">下一题 ➡️</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const quizData = [
+			{
+				question: "以下哪个是人工智能的英文缩写？",
+				options: ["AI", "VR", "AR", "IoT"],
+				correct: 0,
+				explanation: "AI 是 Artificial Intelligence 的缩写，代表人工智能。"
+			},
+			{
+				question: "机器学习是人工智能的一个分支，它的主要特点是？",
+				options: ["通过规则硬编码", "从数据中学习规律", "只能进行数学计算", "不需要训练"],
+				correct: 1,
+				explanation: "机器学习通过数据和算法让模型自己学习规律，而不是显式编程每一步。"
+			},
+			{
+				question: "以下哪个应用主要使用了计算机视觉技术？",
+				options: ["人脸识别门禁", "语音助手", "推荐系统", "机器翻译"],
+				correct: 0,
+				explanation: "人脸识别依赖计算机视觉分析图像，属于AI典型应用。"
+			},
+			{
+				question: "什么是深度学习？",
+				options: ["一种深度思考方法", "基于多层神经网络的机器学习", "数据库深度查询", "硬件深度优化"],
+				correct: 1,
+				explanation: "深度学习是机器学习的分支，使用多层神经网络进行特征提取和学习。"
+			},
+			{
+				question: "下面哪个是生成式AI的代表应用？",
+				options: ["电子表格", "对话模型", "计算机操作系统", "防火墙"],
+				correct: 1,
+				explanation: "大语言模型可以根据提示生成文本，属于生成式人工智能。"
+			},
+			{
+				question: "NLP是以下哪个领域的缩写？",
+				options: ["自然语言处理", "自然语言编程", "神经网络学习", "新语言编程"],
+				correct: 0,
+				explanation: "NLP 是 Natural Language Processing 的缩写，即自然语言处理。"
+			},
+			{
+				question: "以下哪种技术让AI能够从图像中识别物体？",
+				options: ["语音识别", "计算机视觉", "强化学习", "推荐系统"],
+				correct: 1,
+				explanation: "计算机视觉技术使AI能够理解和分析图像内容。"
+			}
+		];
+
+		let currentQuizIndex = 0;
+		let quizScore = 0;
+		let quizLock = false;
+		let totalQuizQuestions = quizData.length;
+
+		const questionEl = document.getElementById("questionText");
+		const optionsContainer = document.getElementById("optionsContainer");
+		const feedbackMsg = document.getElementById("feedbackMsg");
+		const nextBtn = document.getElementById("nextQuestionBtn");
+		const quizScoreSpan = document.getElementById("quizScore");
+
+		function updateQuizScoreUI() {
+			quizScoreSpan.innerText = `得分: ${quizScore}`;
+		}
+
+		function loadQuizQuestion() {
+			quizLock = false;
+			const qData = quizData[currentQuizIndex];
+			questionEl.innerText = `${currentQuizIndex + 1}. ${qData.question}`;
+			optionsContainer.innerHTML = "";
+			qData.options.forEach((opt, idx) => {
+				const btn = document.createElement("button");
+				btn.className = "quiz-option";
+				btn.innerText = `${String.fromCharCode(65 + idx)}. ${opt}`;
+				btn.setAttribute("data-opt-index", idx);
+				btn.addEventListener("click", () => handleAnswer(idx, btn));
+				optionsContainer.appendChild(btn);
+			});
+			feedbackMsg.innerHTML = "选择一个答案吧";
+			enableQuizOptions(true);
+		}
+
+		function enableQuizOptions(enable) {
+			const allOpts = document.querySelectorAll(".quiz-option");
+			allOpts.forEach(opt => {
+				if (enable) {
+					opt.classList.remove("disabled-opt", "correct-feedback", "wrong-feedback");
+					opt.disabled = false;
+				} else {
+					opt.classList.add("disabled-opt");
+					opt.disabled = true;
+				}
+			});
+		}
+
+		function handleAnswer(selectedIdx, btnElement) {
+			if (quizLock) {
+				feedbackMsg.innerHTML = "你已经完成本题，进入下一题吧";
+				return;
+			}
+			const currentQ = quizData[currentQuizIndex];
+			const isCorrect = (selectedIdx === currentQ.correct);
+			quizLock = true;
+			const allOptions = document.querySelectorAll(".quiz-option");
+			allOptions.forEach(opt => opt.disabled = true);
+
+			const correctBtn = allOptions[currentQ.correct];
+			if (correctBtn) correctBtn.classList.add("correct-feedback");
+
+			if (isCorrect) {
+				quizScore += 10;
+				updateQuizScoreUI();
+				feedbackMsg.innerHTML = `✅ 回答正确！ +10分。 ${currentQ.explanation}`;
+				btnElement.classList.add("correct-feedback");
+			} else {
+				feedbackMsg.innerHTML = `❌ 回答错误！ 正确答案是 ${String.fromCharCode(65 + currentQ.correct)}. ${currentQ.options[currentQ.correct]}。 ${currentQ.explanation}`;
+				btnElement.classList.add("wrong-feedback");
+			}
+		}
+
+		function nextQuestion() {
+			if (!quizLock && currentQuizIndex < totalQuizQuestions) {
+				feedbackMsg.innerHTML = "请先回答当前题目再继续";
+				return;
+			}
+			if (currentQuizIndex + 1 < totalQuizQuestions) {
+				currentQuizIndex++;
+				loadQuizQuestion();
+			} else {
+				if (quizLock || currentQuizIndex === totalQuizQuestions - 1) {
+					let finalMsg = `🎉 恭喜你完成了所有题目！ 最终得分: ${quizScore} / ${totalQuizQuestions * 10} 分。`;
+					feedbackMsg.innerHTML = finalMsg;
+					nextBtn.disabled = true;
+					enableQuizOptions(false);
+					return;
+				}
+			}
+			if (nextBtn.disabled) {
+				nextBtn.disabled = false;
+			}
+		}
+
+		function initQuiz() {
+			currentQuizIndex = 0;
+			quizScore = 0;
+			quizLock = false;
+			updateQuizScoreUI();
+			loadQuizQuestion();
+			nextBtn.disabled = false;
+			nextBtn.onclick = nextQuestion;
+		}
+
+		initQuiz();
+	</script>
+</body>
+
+</html>

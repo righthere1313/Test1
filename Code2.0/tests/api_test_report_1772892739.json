@@ -1,0 +1,242 @@
+{
+  "summary": {
+    "total_tests": 14,
+    "passed": 12,
+    "failed": 2,
+    "pass_rate": "85.71%",
+    "total_time_seconds": 0.16310334205627441
+  },
+  "test_results": [
+    {
+      "test_name": "健康检查",
+      "status": "PASS",
+      "result": {
+        "status": "ok"
+      },
+      "error": null
+    },
+    {
+      "test_name": "根路径",
+      "status": "PASS",
+      "result": {
+        "message": "TeachingAgent Local Knowledge Base Service",
+        "docs_url": "/docs",
+        "endpoints": {
+          "upload_document": "/api/v1/files/upload",
+          "list_documents": "/api/v1/files/documents",
+          "fulltext_search": "/api/v1/chat/search/fulltext",
+          "semantic_search": "/api/v1/chat/search/semantic",
+          "hybrid_search": "/api/v1/chat/search/hybrid",
+          "qa": "/api/v1/chat/qa"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "文档上传",
+      "status": "PASS",
+      "result": {
+        "document_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0",
+        "filename": "test_document_f75930aa.txt",
+        "file_type": "txt",
+        "version": 1,
+        "chunk_count": 1,
+        "sections": [
+          {
+            "title": "这是一个测试文档内容，用于验证API功能。包含多个段落和关键词。",
+            "page_number": 1,
+            "index": 0
+          }
+        ],
+        "status": "processed"
+      },
+      "error": null
+    },
+    {
+      "test_name": "文档列表",
+      "status": "PASS",
+      "result": [
+        {
+          "document_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0",
+          "filename": "test_document_f75930aa.txt",
+          "file_type": "txt",
+          "current_version": 1,
+          "created_at": "2026-03-07T14:12:18.950811Z",
+          "updated_at": "2026-03-07T14:12:18.950811Z"
+        },
+        {
+          "document_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23",
+          "filename": "test_upload.txt",
+          "file_type": "txt",
+          "current_version": 1,
+          "created_at": "2026-03-07T14:10:59.875203Z",
+          "updated_at": "2026-03-07T14:10:59.875203Z"
+        }
+      ],
+      "error": null
+    },
+    {
+      "test_name": "全文搜索",
+      "status": "PASS",
+      "result": {
+        "mode": "fulltext",
+        "query": "测试",
+        "results": [
+          {
+            "chunk_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23_v1_0",
+            "score": 166.66666666666666,
+            "content": "测试文档内容",
+            "metadata": {
+              "document_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23",
+              "filename": "test_upload.txt",
+              "version": 1,
+              "chunk_index": 0,
+              "chunk_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23_v1_0"
+            }
+          },
+          {
+            "chunk_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0_v1_0",
+            "score": 31.25,
+            "content": "这是一个测试文档内容，用于验证API功能。包含多个段落和关键词。",
+            "metadata": {
+              "document_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0",
+              "filename": "test_document_f75930aa.txt",
+              "version": 1,
+              "chunk_index": 0,
+              "chunk_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0_v1_0"
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "test_name": "语义搜索",
+      "status": "PASS",
+      "result": {
+        "mode": "semantic",
+        "query": "验证功能",
+        "results": [
+          {
+            "chunk_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23_v1_0",
+            "score": 0.3333333333333333,
+            "content": "测试文档内容",
+            "metadata": {
+              "chunk_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23_v1_0",
+              "filename": "test_upload.txt",
+              "version": 1,
+              "document_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23",
+              "chunk_index": 0
+            }
+          },
+          {
+            "chunk_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0_v1_0",
+            "score": 0.3333333333333333,
+            "content": "这是一个测试文档内容，用于验证API功能。包含多个段落和关键词。",
+            "metadata": {
+              "version": 1,
+              "chunk_index": 0,
+              "filename": "test_document_f75930aa.txt",
+              "chunk_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0_v1_0",
+              "document_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0"
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "test_name": "混合搜索",
+      "status": "PASS",
+      "result": {
+        "mode": "hybrid",
+        "query": "API测试",
+        "results": [
+          {
+            "chunk_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23_v1_0",
+            "score": 0.2333333333333333,
+            "content": "测试文档内容",
+            "metadata": {
+              "document_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23",
+              "chunk_id": "53af8e86-e014-4e6d-8685-5b2ebdee4e23_v1_0",
+              "filename": "test_upload.txt",
+              "chunk_index": 0,
+              "version": 1
+            }
+          },
+          {
+            "chunk_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0_v1_0",
+            "score": 0.2333333333333333,
+            "content": "这是一个测试文档内容，用于验证API功能。包含多个段落和关键词。",
+            "metadata": {
+              "chunk_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0_v1_0",
+              "version": 1,
+              "document_id": "aaf984b0-74e9-43c3-a845-58cc39cb80a0",
+              "filename": "test_document_f75930aa.txt",
+              "chunk_index": 0
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "test_name": "问答生成",
+      "status": "FAIL",
+      "result": null,
+      "error": ""
+    },
+    {
+      "test_name": "PPT生成",
+      "status": "PASS",
+      "result": {
+        "status": "success",
+        "filename": "5669752b-2700-493b-b646-e09d904d4a75.pptx",
+        "download_url": "/api/v1/generate/download/ppt/5669752b-2700-493b-b646-e09d904d4a75.pptx"
+      },
+      "error": null
+    },
+    {
+      "test_name": "DOCX生成",
+      "status": "PASS",
+      "result": {
+        "status": "success",
+        "filename": "ea14e665-ef3d-44cb-8536-b798beeb6c00.docx",
+        "download_url": "/api/v1/generate/download/docx/ea14e665-ef3d-44cb-8536-b798beeb6c00.docx"
+      },
+      "error": null
+    },
+    {
+      "test_name": "文件下载",
+      "status": "PASS",
+      "result": {
+        "filename": "a26d948c-97d1-4b77-9032-cb5986bdf590.pptx",
+        "content_length": 30045
+      },
+      "error": null
+    },
+    {
+      "test_name": "边界条件",
+      "status": "FAIL",
+      "result": null,
+      "error": ""
+    },
+    {
+      "test_name": "错误条件",
+      "status": "PASS",
+      "result": {
+        "error_tests": "completed"
+      },
+      "error": null
+    },
+    {
+      "test_name": "性能测试",
+      "status": "PASS",
+      "result": {
+        "avg_search_time_ms": 1.6793409983317058
+      },
+      "error": null
+    }
+  ],
+  "timestamp": "2026-03-07 22:12:19"
+}

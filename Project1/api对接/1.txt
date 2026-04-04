@@ -1,0 +1,217 @@
+========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/chat/qa
+api.js:14 方法: POST
+api.js:16 请求体: {"query":"生成一个有关Copilot_大模型辅助编程的发展和挑战的教案和ppt","top_k":5,"session_id":"session_1775293556267_yqtiv6nqo"}
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"query":"生成一个有关Copilot_大模型辅助编程的发展和挑战的教案和ppt","answer":"已完成PPT生成任务。","citations":[],"intent":"generate_ppt","intent_confidence":0.93,"intent_reason":"识别到PPT生成意图关键词；规则校验一致","intent_source":"llm","route":"generate_ppt","task_result":{"status":"success","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","download_url":"/api/v1/generate/download/ppt/944a0ff1-0608-4640-8706-54e65b099eb3.pptx","llm_used":true,"ppt_id":"efa2a7b2bd2443e395c7a2e449e673c3","version":1},"error":null}
+ChatPage.vue?t=1775302998646:246 QA响应: Object
+ChatPage.vue?t=1775302998646:311 ✅ 模板刚刚选择，直接继续生成
+ChatPage.vue?t=1775302998646:512 ========== QA已经返回了生成结果 ==========
+ChatPage.vue?t=1775302998646:513 task_result: Object
+ChatPage.vue?t=1775302998646:514 task_result完整结构: {
+  "status": "success",
+  "filename": "944a0ff1-0608-4640-8706-54e65b099eb3.pptx",
+  "download_url": "/api/v1/generate/download/ppt/944a0ff1-0608-4640-8706-54e65b099eb3.pptx",
+  "llm_used": true,
+  "ppt_id": "efa2a7b2bd2443e395c7a2e449e673c3",
+  "version": 1
+}
+ChatPage.vue?t=1775302998646:522 找到单个filename字段: 944a0ff1-0608-4640-8706-54e65b099eb3.pptx
+ChatPage.vue?t=1775302998646:525 PPT文件名: 944a0ff1-0608-4640-8706-54e65b099eb3.pptx
+ChatPage.vue?t=1775302998646:555 最终识别结果 - pptFilename: 944a0ff1-0608-4640-8706-54e65b099eb3.pptx , docxFilename: null
+ChatPage.vue?t=1775302998646:571 ========== 开始后台加载PPT预览 ==========
+previewHelper.js:6 ========== 开始加载PPT预览（后台） ==========
+previewHelper.js:7 PPT文件名: 944a0ff1-0608-4640-8706-54e65b099eb3.pptx
+previewHelper.js:12 创建PPT预览...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview
+api.js:14 方法: POST
+api.js:16 请求体: {"filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx"}
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"queued","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069}
+previewHelper.js:16 ✅ PPT预览创建成功: Object
+previewHelper.js:20 开始轮询获取PPT预览状态...
+previewHelper.js:27 轮询第 1 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"queued","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: queued
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 2 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 3 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 4 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 5 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 6 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 7 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 8 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 9 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 10 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 11 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303069,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 12 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303079,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 13 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303079,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 14 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":0,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303079,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 0/11
+previewHelper.js:27 轮询第 15 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"processing","total_pages":11,"progress":{"done_pages":11,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303082,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: processing
+previewHelper.js:40 等待中，当前进度: 11/11
+previewHelper.js:27 轮询第 16 次...
+api.js:12 ========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9
+api.js:14 方法: GET
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"preview_id":"pv_a1c0e220060449428c37abec38cc4bb9","filename":"944a0ff1-0608-4640-8706-54e65b099eb3.pptx","status":"done","total_pages":11,"progress":{"done_pages":11,"total_pages":11},"options":{"width":1600,"include_thumbnails":true,"thumb_width":320,"format":"png"},"error":null,"created_at":1775303069,"updated_at":1775303083,"pages_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages","thumbs_base_url":"/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/thumbs"}
+previewHelper.js:30 当前预览状态: done
+previewHelper.js:33 ✅ PPT预览完成！
+previewHelper.js:49 最终预览信息: Object
+previewHelper.js:69 ✅ PPT预览加载完成，已保存到store
+CoursewarePreview.vue:594 ========== 开始加载PPT预览 ==========
+CoursewarePreview.vue:595 store.generatedFiles: Proxy(Object)
+CoursewarePreview.vue:596 lastLoadedPptFilename: null
+CoursewarePreview.vue:597 store.generatedFiles.pptPreviewLoaded: true
+CoursewarePreview.vue:608 使用已存在的PPT预览ID: pv_a1c0e220060449428c37abec38cc4bb9
+CoursewarePreview.vue:612 预览页数: Proxy(Array)
+CoursewarePreview.vue:616 使用已存在的第 1 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/1.png
+CoursewarePreview.vue:616 使用已存在的第 2 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/2.png
+CoursewarePreview.vue:616 使用已存在的第 3 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/3.png
+CoursewarePreview.vue:616 使用已存在的第 4 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/4.png
+CoursewarePreview.vue:616 使用已存在的第 5 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/5.png
+CoursewarePreview.vue:616 使用已存在的第 6 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/6.png
+CoursewarePreview.vue:616 使用已存在的第 7 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/7.png
+CoursewarePreview.vue:616 使用已存在的第 8 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/8.png
+CoursewarePreview.vue:616 使用已存在的第 9 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/9.png
+CoursewarePreview.vue:616 使用已存在的第 10 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/10.png
+CoursewarePreview.vue:616 使用已存在的第 11 页图片URL: http://localhost:8000/api/v1/generate/ppt/preview/pv_a1c0e220060449428c37abec38cc4bb9/pages/11.png
+CoursewarePreview.vue:625 ✅ PPT幻灯片加载完成: 11 页
+CoursewarePreview.vue:769 ========== 开始加载教案预览 ==========
+CoursewarePreview.vue:770 store.generatedFiles: Proxy(Object)
+CoursewarePreview.vue:800 没有教案文件名，跳过加载
+CoursewarePreview.vue:594 ========== 开始加载PPT预览 ==========
+CoursewarePreview.vue:595 store.generatedFiles: Proxy(Object)[[Handler]]: MutableReactiveHandler[[Target]]: Object[[IsRevoked]]: false
+CoursewarePreview.vue:596 lastLoadedPptFilename: 944a0ff1-0608-4640-8706-54e65b099eb3.pptx
+CoursewarePreview.vue:597 store.generatedFiles.pptPreviewLoaded: true
+CoursewarePreview.vue:603 ✅ 已加载过相同的PPT预览，直接使用缓存
+CoursewarePreview.vue:769 ========== 开始加载教案预览 ==========
+CoursewarePreview.vue:770 store.generatedFiles: Proxy(Object)
+CoursewarePreview.vue:800 没有教案文件名，跳过加载
+CoursewarePreview.vue:594 ========== 开始加载PPT预览 ==========
+CoursewarePreview.vue:595 store.generatedFiles: Proxy(Object)
+CoursewarePreview.vue:596 lastLoadedPptFilename: 944a0ff1-0608-4640-8706-54e65b099eb3.pptx
+CoursewarePreview.vue:597 store.generatedFiles.pptPreviewLoaded: true
+CoursewarePreview.vue:603 ✅ 已加载过相同的PPT预览，直接使用缓存
+
+
+2
+========== 发送API请求 ==========
+api.js:13 URL: http://localhost:8000/api/v1/chat/qa
+api.js:14 方法: POST
+api.js:16 请求体: {"query":"生成教案","top_k":5,"session_id":"session_1775293556267_yqtiv6nqo"}
+api.js:21 响应状态: 200
+api.js:22 响应内容: {"query":"生成教案","answer":"已完成Word生成任务。","citations":[],"intent":"generate_word","intent_confidence":0.95,"intent_reason":"教案通常以Word文档形式撰写和交付，用户明确要求‘生成’，且未提及其他格式或修改动作，符合generate_word判定规则。","intent_source":"llm","route":"generate_word","task_result":{"status":"success","filename":"18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx","download_url":"/api/v1/generate/download/docx/18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx"},"error":null}
+ChatPage.vue:564 QA响应: {query: '生成教案', answer: '已完成Word生成任务。', citations: Array(0), intent: 'generate_word', intent_confidence: 0.95, …}
+ChatPage.vue:830 ========== QA已经返回了生成结果 ==========
+ChatPage.vue:831 task_result: {status: 'success', filename: '18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx', download_url: '/api/v1/generate/download/docx/18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx'}
+ChatPage.vue:832 task_result完整结构: {
+  "status": "success",
+  "filename": "18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx",
+  "download_url": "/api/v1/generate/download/docx/18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx"
+}
+ChatPage.vue:840 找到单个filename字段: 18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx
+ChatPage.vue:846 Word文件名: 18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx
+ChatPage.vue:873 最终识别结果 - pptFilename: null , docxFilename: 18c3c6f3-1fa7-401f-aed3-9398cc193b7c.docx

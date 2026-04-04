@@ -173,7 +173,7 @@ const handleCancel = () => {
 .profile-editor {
   flex: 1;
   overflow: hidden;
-  padding: 16px 40px;
+  padding: 52px 40px;
   display: flex;
   flex-direction: column;
 }
@@ -311,9 +311,6 @@ const handleCancel = () => {
   transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
-.btn:hover {
-  opacity: 0.9;
-}
 
 .btn:active {
   transform: scale(0.98);

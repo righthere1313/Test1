@@ -52,7 +52,9 @@
           <input v-model="loginData.password" type="password" placeholder="密码">
         </div>
         <div class="btn-box">
-          <button @click="handleLogin">登录</button>
+          <button @click="handleLogin" :disabled="isLoading">
+            {{ isLoading ? '登录中...' : '登录' }}
+          </button>
           <p @click="toggleForm">没有账号?去注册</p>
         </div>
       </div>
@@ -83,17 +85,35 @@ const toggleForm = () => {
   isSwitched.value = !isSwitched.value
 }
 
-const handleLogin = () => {
+const isLoading = ref(false)
+
+const handleLogin = async () => {
   if (!loginData.value.username || !loginData.value.password) {
     alert('请填写完整信息')
     return
   }
-  store.updateUser({ username: loginData.value.username })
-  store.isLoggedIn = true
-  router.push('/chat')
+  
+  isLoading.value = true
+  try {
+    const result = await store.login(loginData.value.username, loginData.value.password)
+    
+    if (result.success) {
+      store.isLoading = true
+      setTimeout(() => {
+        store.isLoading = false
+        router.push('/chat')
+      }, 1000)
+    } else {
+      alert(result.error || '登录失败')
+      isLoading.value = false
+    }
+  } catch (error) {
+    alert('登录失败：' + (error.message || '未知错误'))
+    isLoading.value = false
+  }
 }
 
-const handleRegister = () => {
+const handleRegister = async () => {
   if (!registerData.value.username || !registerData.value.password) {
     alert('请填写完整信息')
     return
@@ -102,8 +122,30 @@ const handleRegister = () => {
     alert('两次密码输入不一致')
     return
   }
-  store.updateUser({ username: registerData.value.username })
-  toggleForm()
+  
+  isLoading.value = true
+  try {
+    const result = await store.register(
+      registerData.value.username,
+      registerData.value.password
+    )
+    
+    if (result.success) {
+      alert('注册成功！请登录')
+      registerData.value = {
+        username: '',
+        password: '',
+        confirmPassword: ''
+      }
+      toggleForm()
+    } else {
+      alert(result.error || '注册失败')
+    }
+  } catch (error) {
+    alert('注册失败：' + (error.message || '未知错误'))
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -329,9 +371,6 @@ button {
   transition: opacity 0.2s ease;
 }
 
-button:hover {
-  opacity: 0.8;
-}
 
 .btn-box p {
   height: 30px;
