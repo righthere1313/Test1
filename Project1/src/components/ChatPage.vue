@@ -7,6 +7,9 @@
           <button @click="startNewChat" class="new-chat-btn">
             + 开启新对话
           </button>
+          <button @click="openTemplateModal" class="template-btn">
+            确定PPT模板
+          </button>
         </div>
         <div class="chat-messages" ref="messagesContainer">
           <div class="message ai-message">
@@ -25,9 +28,6 @@
                   class="quick-reply-btn"
                 >
                   {{ reply }}
-                </button>
-                <button @click="openTemplateModal" class="quick-reply-btn template-btn">
-                  确定PPT模板
                 </button>
               </div>
             </div>
@@ -378,6 +378,11 @@ const isLoadingTemplates = ref(false);
 const templateCoverUrls = ref({});
 
 const loadTemplates = async () => {
+  if (pptTemplates.value.length > 0) {
+    console.log('✅ 使用缓存的模板数据');
+    return;
+  }
+  
   isLoadingTemplates.value = true;
   try {
     console.log('========== 开始加载PPT模板 ==========');
@@ -547,15 +552,22 @@ const sendMessage = async () => {
     }
 
     const effectiveQuery = queryText || '请分析这个文件';
-    console.log('发送QA请求:', { queryText, effectiveQuery, tempDocIds, sessionId: store.sessionId });
+    console.log('发送QA请求:', { queryText, effectiveQuery, tempDocIds, sessionId: store.sessionId, selectedPptTemplate: store.selectedPptTemplate });
     
     let aiResponse;
     try {
-      aiResponse = await chatAPI.qa(effectiveQuery, {
+      const qaOptions = {
         top_k: 5,
         temporary_document_ids: tempDocIds,
         session_id: store.sessionId,
-      });
+      };
+      
+      if (store.selectedPptTemplate?.layout) {
+        qaOptions.ppt_template = store.selectedPptTemplate.layout;
+        console.log('传递PPT模板:', store.selectedPptTemplate.layout, '(layout)');
+      }
+      
+      aiResponse = await chatAPI.qa(effectiveQuery, qaOptions);
     } catch (qaError) {
       console.error('QA请求失败，尝试意图识别:', qaError);
       aiResponse = { answer: qaError.message || '请求失败' };
@@ -566,12 +578,6 @@ const sendMessage = async () => {
     if (aiResponse.intent === 'generate_ppt') {
       if (!store.selectedPptTemplate) {
         console.log('⚠️ 需要生成PPT但未选择模板，提示用户选择');
-        
-        if (aiResponse.task_result && aiResponse.task_result.status === 'success') {
-          console.log('⚠️ 已有生成结果，先处理文件');
-          await processAiResponse(aiResponse, userMsg);
-          return;
-        }
         
         pendingGenerationData.value = {
           aiResponse,
@@ -801,8 +807,29 @@ const continueWithCurrentTemplate = async () => {
   if (pendingGenerationData.value) {
     const data = pendingGenerationData.value;
     pendingGenerationData.value = null;
-    isAwaitingAI.value = true;
-    await processAiResponse(data.aiResponse, data.userMsg);
+    
+    console.log('重新调用QA接口，传递模板:', store.selectedPptTemplate?.layout);
+    
+    try {
+      const qaOptions = {
+        top_k: 5,
+        temporary_document_ids: data.tempDocIds,
+        session_id: store.sessionId,
+      };
+      
+      if (store.selectedPptTemplate?.layout) {
+        qaOptions.ppt_template = store.selectedPptTemplate.layout;
+        console.log('传递PPT模板:', store.selectedPptTemplate.layout, '(layout)');
+      }
+      
+      const aiResponse = await chatAPI.qa(data.queryText, qaOptions);
+      console.log('QA响应（带模板）:', aiResponse);
+      
+      await processAiResponse(aiResponse, data.userMsg);
+    } catch (error) {
+      console.error('重新调用QA失败:', error);
+      isAwaitingAI.value = false;
+    }
   }
 };
 
@@ -883,12 +910,12 @@ const processAiResponse = async (aiResponse, userMsg) => {
         selectedTemplate: store.selectedPptTemplate
       });
       
-      isAwaitingAI.value = false;
-      
       if (pptFilename) {
         console.log('========== 开始后台加载PPT预览 ==========');
         await loadPptPreviewInBackground(store, pptFilename);
       }
+      
+      isAwaitingAI.value = false;
       
       const completedMsg = {
         role: "ai",
@@ -941,11 +968,34 @@ const confirmTemplate = () => {
   isTemplateJustSelected.value = true;
   
   if (pendingGenerationData.value) {
-    console.log('继续之前的生成流程:', pendingGenerationData.value);
+    console.log('继续之前的生成流程，重新调用QA传递模板:', pendingGenerationData.value);
     const data = pendingGenerationData.value;
     pendingGenerationData.value = null;
-    isAwaitingAI.value = true;
-    processAiResponse(data.aiResponse, data.userMsg);
+    
+    console.log('重新调用QA接口，传递模板:', store.selectedPptTemplate?.layout);
+    
+    (async () => {
+      try {
+        const qaOptions = {
+          top_k: 5,
+          temporary_document_ids: data.tempDocIds,
+          session_id: store.sessionId,
+        };
+        
+        if (store.selectedPptTemplate?.layout) {
+          qaOptions.ppt_template = store.selectedPptTemplate.layout;
+          console.log('传递PPT模板:', store.selectedPptTemplate.layout, '(layout)');
+        }
+        
+        const aiResponse = await chatAPI.qa(data.queryText, qaOptions);
+        console.log('QA响应（带模板）:', aiResponse);
+        
+        await processAiResponse(aiResponse, data.userMsg);
+      } catch (error) {
+        console.error('重新调用QA失败:', error);
+        isAwaitingAI.value = false;
+      }
+    })();
   }
 };
 
@@ -1842,6 +1892,7 @@ const cancelConfirm = () => {
   /* border-bottom: 1px solid #bbd6bb; */
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .new-chat-btn {
@@ -1856,12 +1907,18 @@ const cancelConfirm = () => {
   transition: background 0.2s ease;
 }
 
-.new-chat-btn:hover {
-  background: #8cbdb1;
-}
 
-.template-btn {
-  border-color: #8ab4aa;
+
+.template-btn{
+  margin-left: 6px;
+  padding: 4px 12px;
+  border: rgba(0, 0, 0, 0);
+  background: #bdd6cd;
+  color: #0f5132;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
 }
 
 .template-modal-overlay {

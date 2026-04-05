@@ -176,13 +176,18 @@ export const filesAPI = {
 
 export const chatAPI = {
   qa: async (query, options = {}) => {
-    const { top_k = 5, document_id, temporary_document_ids, session_id } = options
+    const { top_k = 5, document_id, temporary_document_ids, session_id, ppt_template } = options
     const requestBody = { query: query || '', top_k }
     if (document_id) requestBody.document_id = document_id
     if (temporary_document_ids && temporary_document_ids.length > 0) {
       requestBody.temporary_document_ids = temporary_document_ids
     }
     if (session_id) requestBody.session_id = session_id
+    if (ppt_template) {
+      requestBody.task_payload = {
+        layout: ppt_template
+      }
+    }
     return request(apiConfig.CHAT.QA, {
       method: 'POST',
       body: JSON.stringify(requestBody),
