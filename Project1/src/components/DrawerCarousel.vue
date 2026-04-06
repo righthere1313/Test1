@@ -1,22 +1,22 @@
 <template>
-  <div id="main">
+  <div id="main" @click="handleClick">
     <div id="click-section">
       <div id="drawerboxes">
         <div class="drawerbox" :class="{ active: chosenSlideNumber === 1 }">
-          <button class="drawer-btn" :class="{ active: chosenSlideNumber === 1 }" @click="slideTo(1)">智能对话<span class="drawer-head">1</span></button>
+          <button class="drawer-btn" :class="{ active: chosenSlideNumber === 1 }" @click.stop="slideTo(1)">智能对话<span class="drawer-head">1</span></button>
         </div>
         <div class="drawerbox" :class="{ active: chosenSlideNumber === 2 }">
-          <button class="drawer-btn" :class="{ active: chosenSlideNumber === 2 }" @click="slideTo(2)">知识库管理<span class="drawer-head">2</span></button>
+          <button class="drawer-btn" :class="{ active: chosenSlideNumber === 2 }" @click.stop="slideTo(2)">知识库管理<span class="drawer-head">2</span></button>
         </div>
         <div class="drawerbox" :class="{ active: chosenSlideNumber === 3 }">
-          <button class="drawer-btn" :class="{ active: chosenSlideNumber === 3 }" @click="slideTo(3)">课件预览生成<span class="drawer-head">3</span></button>
+          <button class="drawer-btn" :class="{ active: chosenSlideNumber === 3 }" @click.stop="slideTo(3)">课件预览生成<span class="drawer-head">3</span></button>
         </div>
         <div class="drawerbox" :class="{ active: chosenSlideNumber === 4 }">
-          <button class="drawer-btn" :class="{ active: chosenSlideNumber === 4 }" @click="slideTo(4)">个人主页<span class="drawer-head">4</span></button>
+          <button class="drawer-btn" :class="{ active: chosenSlideNumber === 4 }" @click.stop="slideTo(4)">历史管理<span class="drawer-head">4</span></button>
         </div>
       </div>
     </div>
-    <div id="slide-section" @mouseenter="pauseAutoPlay" @mouseleave="resumeAutoPlay">
+    <div id="slide-section">
       <div id="slide-bar">
         <div id="bar" :style="{ transform: `translateY(${barOffset}%)` }"></div>
       </div>
@@ -55,18 +55,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
+
+const emit = defineEmits(['nextPage'])
 
 const chosenSlideNumber = ref(1)
 const offset = ref(0)
 const barOffset = ref(0)
-let intervalID = null
-
-const startSlide = () => {
-  intervalID = setInterval(() => {
-    slideTo(chosenSlideNumber.value % 4 + 1)
-  }, 5000)
-}
 
 const slideTo = (slideNumber) => {
   let previousSlideNumber = chosenSlideNumber.value
@@ -75,20 +70,18 @@ const slideTo = (slideNumber) => {
   barOffset.value += (chosenSlideNumber.value - previousSlideNumber) * (100)
 }
 
-const pauseAutoPlay = () => {
-  clearInterval(intervalID)
-}
-
-const resumeAutoPlay = () => {
-  startSlide()
+const handleClick = () => {
+  if (chosenSlideNumber.value < 4) {
+    slideTo(chosenSlideNumber.value + 1)
+  } else {
+    emit('nextPage')
+  }
 }
 
 onMounted(() => {
-  startSlide()
-})
-
-onUnmounted(() => {
-  clearInterval(intervalID)
+  chosenSlideNumber.value = 1
+  offset.value = 0
+  barOffset.value = 0
 })
 </script>
 

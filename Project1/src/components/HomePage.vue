@@ -1,5 +1,5 @@
 <template>
-  <div class="home-page" :class="{ 'logged-in': isLoggedIn }">
+  <div class="home-page" :class="{ 'logged-in': isLoggedIn, 'hide-cursor': shouldHideCursor }">
     <div class="main-content">
       <transition name="fade" mode="out-in">
         <div v-if="showSplash && !isLoggedIn" key="splash" class="splash-wrapper">
@@ -8,7 +8,7 @@
         <div v-else key="intro" class="content-wrapper" :class="{ 'logged-in': isLoggedIn }">
           <div class="carousel-container" @wheel.passive="false" @wheel="handleWheel">
             <div class="carousel-wrapper" :style="{ transform: `translateY(-${currentPage * 100}%)` }">
-              <div class="carousel-page">
+              <div class="carousel-page" @click="handleFirstPageClick">
                 <div class="page-content">
                   <div class="hero-section">
                     <h1 class="title">AI互动式教学智能体</h1>
@@ -58,7 +58,7 @@
               
               <div class="carousel-page">
                 <div class="page-content drawer-content">
-                  <DrawerCarousel />
+                  <DrawerCarousel @nextPage="handleDrawerNextPage" />
                 </div>
               </div>
               
@@ -86,6 +86,7 @@ import SendMessage from './SendMessage.vue'
 const router = useRouter()
 const route = useRoute()
 const isLoggedIn = computed(() => store.isLoggedIn)
+const shouldHideCursor = computed(() => !isLoggedIn.value && (showSplash.value || currentPage.value < 2))
 const showSplash = ref(true)
 const currentPage = ref(0)
 const totalPages = 3
@@ -132,6 +133,18 @@ const goToLogin = () => {
 //     startCarousel()
 //   }
 // }
+
+const handleFirstPageClick = () => {
+  if (!isLoggedIn.value && currentPage.value === 0) {
+    currentPage.value++
+  }
+}
+
+const handleDrawerNextPage = () => {
+  if (!isLoggedIn.value && currentPage.value === 1) {
+    currentPage.value++
+  }
+}
 
 let wheelTimeout = null
 const handleWheel = (event) => {
@@ -225,6 +238,14 @@ onUnmounted(() => {
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+
+.home-page.hide-cursor {
+  cursor: none;
+}
+
+.home-page.hide-cursor * {
+  cursor: none !important;
 }
 
 .splash-wrapper {

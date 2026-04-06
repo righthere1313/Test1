@@ -2,6 +2,7 @@
   <div class="splash-page">
     <div class="splash-content">
       <img class="logo-placeholder" src="/images/logo.jpg" alt="logo">
+      <p class="title">洁 课 灵</p>
       <p class="slogan">让教学更简单，让课堂更精彩</p>
       <p class="english">From prep to class, we make it brilliant</p>
     </div>
@@ -38,15 +39,21 @@
   font-size: 48px;
 }
 
+.title {
+  font-size: 24px;
+  color: #426662;
+  font-weight: 600;
+}
+
 .slogan {
   font-size: 40px;
-  color: #46736d;
+  color: #709e97;
   font-weight: 600;
 }
 
 .english {
   font-size: 38px;
-  color: #6b9a93;
+  color: #9ac1bb;
   font-weight: 400;
 }
 </style>

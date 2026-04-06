@@ -99,18 +99,13 @@
                       <span class="related-name">{{ selectedContent.plan }}</span>
                     </div>
                   </div>
-                  <div class="detail-actions">
-                    <button @click="openCourseware(selectedContent)" class="open-btn">
-                      查看详情
-                    </button>
-                  </div>
                 </div>
               </div>
               <div v-else key="empty" class="empty-detail">
-                <p class="empty-text">点击左侧课件查看详情</p>
+                <p class="empty-text">点击左侧课件查看</p>
               </div>
             </transition>
-            <img src="/images/插画1.png" alt="插画" class="illustration-1">
+            <img v-if="!selectedContent" src="/images/插画1.png" alt="插画" class="illustration-1">
           </div>
         </div>
       </div>
@@ -132,32 +127,48 @@ const isDeleteMode = ref(false)
 
 const subjects = ['数学', '语文', '英语', '物理', '化学', '生物', '历史', '地理', '政治']
 const courseTitles = [
-  '勾股定理教学课件',
-  '二次根式复习课',
-  '函数图像分析',
-  '三角函数入门',
-  '文言文赏析',
-  '英语语法精讲',
-  '牛顿运动定律',
-  '化学反应平衡',
-  '细胞结构与功能',
-  '中国古代史',
-  '地球的运动',
-  '哲学与生活'
+  '人工智能基础入门',
+  '机器学习算法原理',
+  '深度学习框架应用',
+  '数据结构与算法',
+  '软件工程实践',
+  '计算机网络基础',
+  '数据库系统设计',
+  '前端开发技术',
+  '后端系统架构',
+  '云计算与大数据',
+  '人工智能伦理',
+  '软件工程方法论',
+  '机器学习模型优化',
+  '深度学习图像处理',
+  '自然语言处理技术',
+  '计算机视觉应用',
+  '人工智能安全',
+  '软件工程质量保证',
+  'DevOps实践指南',
+  '软件测试技术'
 ]
 const descriptions = [
-  '通过生动的几何图形和实例，深入浅出地讲解勾股定理的应用',
-  '系统复习二次根式的概念、性质和运算，通过大量例题帮助学生巩固知识点',
-  '学习如何分析和绘制各种函数的图像，包括一次函数、二次函数、反比例函数等',
-  '介绍三角函数的基本概念，包括正弦、余弦、正切函数及其在直角三角形中的应用',
-  '赏析经典文言文作品，培养学生的文学素养和阅读理解能力',
-  '系统讲解英语语法知识点，包括时态、语态、从句等',
-  '深入理解牛顿三大运动定律及其在实际问题中的应用',
-  '学习化学反应平衡的原理和影响因素，掌握平衡移动规律',
-  '了解细胞的基本结构和功能，认识生命的基本单位',
-  '梳理中国古代历史发展脉络，掌握重要历史事件和人物',
-  '学习地球的运动规律，理解昼夜交替、四季变化等自然现象',
-  '探讨哲学基本问题，培养辩证思维能力'
+  '介绍人工智能的基本概念、发展历程和应用领域，帮助学生建立AI认知框架',
+  '深入讲解机器学习的核心算法原理，包括监督学习、无监督学习和强化学习',
+  '实践深度学习框架的应用，包括神经网络搭建、模型训练和部署',
+  '系统学习数据结构与算法，提升编程能力和问题解决能力',
+  '探索软件工程的实践方法，包括需求分析、设计、编码和测试',
+  '了解计算机网络的基本原理和协议，掌握网络通信技术',
+  '学习数据库系统的设计原理和优化方法，提高数据管理能力',
+  '掌握前端开发技术，包括HTML、CSS、JavaScript和现代前端框架',
+  '设计后端系统架构，包括API设计、数据库交互和服务部署',
+  '探索云计算与大数据技术，理解分布式系统原理',
+  '探讨人工智能伦理问题，包括隐私保护、算法偏见和社会责任',
+  '学习软件工程方法论，包括敏捷开发、DevOps和持续集成',
+  '掌握机器学习模型优化技术，提高模型性能和泛化能力',
+  '实践深度学习在图像处理中的应用，包括图像分类和目标检测',
+  '探索自然语言处理技术，包括文本分类、情感分析和机器翻译',
+  '学习计算机视觉应用，包括图像识别、人脸识别和视频分析',
+  '了解人工智能安全问题，包括对抗攻击和防御策略',
+  '掌握软件工程质量保证方法，包括代码审查、测试和质量评估',
+  '实践DevOps流程，包括自动化部署、监控和持续交付',
+  '学习软件测试技术，包括单元测试、集成测试和系统测试'
 ]
 
 const generateMockData = () => {
@@ -172,34 +183,74 @@ const generateMockData = () => {
   
   const mockHistory = []
   let idCounter = 1
+  const used2026Titles = new Set()
   
   Object.entries(yearCounts).forEach(([year, count]) => {
     for (let i = 0; i < count; i++) {
-      const month = Math.floor(Math.random() * 12) + 1
-      const day = Math.floor(Math.random() * 28) + 1
-      const date = new Date(year, month - 1, day)
+      let month, day, date, titleIndex, subjectIndex, hasPpt, hasDocx
       
-      const titleIndex = Math.floor(Math.random() * courseTitles.length)
-      const subjectIndex = Math.floor(Math.random() * subjects.length)
-      
-      const hasPpt = Math.random() > 0.3
-      const hasDocx = Math.random() > 0.3
-      
-      mockHistory.push({
-        id: `gen_${idCounter++}`,
-        timestamp: date.getTime(),
-        sessionId: 'mock_session',
-        pptFilename: hasPpt ? `mock_${year}_${i + 1}.pptx` : null,
-        docxFilename: hasDocx ? `mock_${year}_${i + 1}.docx` : null,
-        pptPreviewId: hasPpt ? `pv_mock_${year}_${i + 1}` : null,
-        pptPreviewPages: hasPpt ? Array.from({ length: Math.floor(Math.random() * 15) + 5 }, (_, j) => j + 1) : [],
-        requirements: {
-          subject: subjects[subjectIndex],
-          content: descriptions[titleIndex],
-          title: courseTitles[titleIndex]
-        },
-        selectedTemplate: { id: Math.floor(Math.random() * 9) + 1, name: `模板 ${Math.floor(Math.random() * 9) + 1}` }
-      })
+      if (year === '2026' && i === count - 1) {
+        // 2026年最后一个数据固定为人工智能概要
+        month = 12
+        day = 31
+        date = new Date(year, month - 1, day)
+        subjectIndex = 0 // 数学
+        hasPpt = true
+        hasDocx = true
+        
+        // 固定数据
+        mockHistory.push({
+          id: `gen_${idCounter++}`,
+          timestamp: date.getTime(),
+          sessionId: 'mock_session',
+          pptFilename: '人工智能概要.pptx',
+          docxFilename: '人工智能概要.docx',
+          pptPreviewId: 'pv_ai_summary',
+          pptPreviewPages: Array.from({ length: 12 }, (_, j) => j + 1),
+          requirements: {
+            subject: subjects[subjectIndex],
+            content: '全面介绍人工智能的发展历程、核心技术和应用场景，帮助学生建立对AI技术的完整认知框架。内容包括AI的定义与分类、机器学习基础、深度学习原理、自然语言处理、计算机视觉等核心领域，以及AI在教育、医疗、金融等行业的应用案例。',
+            title: '人工智能概要'
+          },
+          selectedTemplate: { id: 1, name: '科技风格模板' }
+        })
+        used2026Titles.add('人工智能概要')
+      } else {
+        month = Math.floor(Math.random() * 12) + 1
+        day = Math.floor(Math.random() * 28) + 1
+        date = new Date(year, month - 1, day)
+        
+        if (year === '2026') {
+          // 2026年确保标题不重复
+          do {
+            titleIndex = Math.floor(Math.random() * courseTitles.length)
+          } while (used2026Titles.has(courseTitles[titleIndex]))
+          used2026Titles.add(courseTitles[titleIndex])
+          subjectIndex = Math.floor(Math.random() * 3) // 只选前三个科目
+        } else {
+          titleIndex = Math.floor(Math.random() * courseTitles.length)
+          subjectIndex = Math.floor(Math.random() * subjects.length)
+        }
+        
+        hasPpt = Math.random() > 0.3
+        hasDocx = Math.random() > 0.3
+        
+        mockHistory.push({
+          id: `gen_${idCounter++}`,
+          timestamp: date.getTime(),
+          sessionId: 'mock_session',
+          pptFilename: hasPpt ? `mock_${year}_${i + 1}.pptx` : null,
+          docxFilename: hasDocx ? `mock_${year}_${i + 1}.docx` : null,
+          pptPreviewId: hasPpt ? `pv_mock_${year}_${i + 1}` : null,
+          pptPreviewPages: hasPpt ? Array.from({ length: Math.floor(Math.random() * 15) + 5 }, (_, j) => j + 1) : [],
+          requirements: {
+            subject: subjects[subjectIndex],
+            content: descriptions[titleIndex],
+            title: courseTitles[titleIndex]
+          },
+          selectedTemplate: { id: Math.floor(Math.random() * 9) + 1, name: `模板 ${Math.floor(Math.random() * 9) + 1}` }
+        })
+      }
     }
   })
   
@@ -303,10 +354,6 @@ const handleResourceClick = (type, name, generation) => {
   }
 }
 
-const openCourseware = (item) => {
-  store.setCurrentGeneration(item.generation)
-  router.push('/preview')
-}
 
 const getScale = (index) => {
   const distance = Math.abs(index - activeIndex.value)
@@ -582,6 +629,7 @@ onMounted(() => {
   height: 180px;
   object-fit: contain;
   pointer-events: none;
+  z-index: 0;
 }
 
 .column-title {
@@ -720,6 +768,10 @@ onMounted(() => {
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow-y: auto;
+  max-height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .detail-title {
@@ -730,7 +782,7 @@ onMounted(() => {
 }
 
 .detail-info {
-  margin-bottom: 24px;
+  margin-bottom: 10sspx;
 }
 
 .detail-date {
@@ -805,29 +857,7 @@ onMounted(() => {
   color: #495057;
 }
 
-.detail-actions {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #e9ecef;
-}
 
-.open-btn {
-  width: 100%;
-  padding: 12px;
-  background: #1a1a1a;
-  color: white;
-  border: 2px solid #1a1a1a;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.open-btn:hover {
-  background: #bdd6cd;
-  color: #1a1a1a;
-}
 
 .empty-detail {
   display: flex;
